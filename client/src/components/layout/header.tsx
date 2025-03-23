@@ -12,6 +12,8 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useToast } from "@/hooks/use-toast";
 import { useLocation } from "wouter";
 import { useQuery } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
+import { LanguageSwitcher } from "@/components/ui/language-switcher";
 
 type HeaderProps = {
   onOpenSidebar: () => void;
@@ -29,6 +31,7 @@ export default function Header({ onOpenSidebar }: HeaderProps) {
   const { user, logoutMutation } = useAuth();
   const { toast } = useToast();
   const [_, navigate] = useLocation();
+  const { t } = useTranslation();
   
   // Varsayılan uygulama adı
   const [appName, setAppName] = useState("Gymify");
@@ -97,6 +100,8 @@ export default function Header({ onOpenSidebar }: HeaderProps) {
       </div>
 
       <div className="flex items-center space-x-4">
+        <LanguageSwitcher />
+        
         <button className="flex items-center p-2 text-sm font-medium text-gray-700 bg-white rounded-md hover:text-primary focus:outline-none">
           <Bell className="w-5 h-5 mx-1" />
         </button>

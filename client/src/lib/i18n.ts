@@ -2,11 +2,12 @@ import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 
+// Dil dosyalarını içe aktar
 import translationEN from '../locales/en/translation.json';
 import translationTR from '../locales/tr/translation.json';
 import translationDE from '../locales/de/translation.json';
 
-// Çevirileri konumlandır
+// Kaynaklar
 const resources = {
   en: {
     translation: translationEN
@@ -20,21 +21,17 @@ const resources = {
 };
 
 i18n
-  // Otomatik dil algılama
+  // Dil algılayıcısını kullan
   .use(LanguageDetector)
-  // React-i18next ile entegrasyon
+  // React i18next eklentisi
   .use(initReactI18next)
-  // i18n'i başlat
+  // i18next'i başlat
   .init({
     resources,
-    fallbackLng: 'en', // Varsayılan dil
-    debug: false, // Geliştirme modunda hata ayıklama
-    detection: {
-      order: ['localStorage', 'navigator'], // Önce localStorage'dan, sonra tarayıcı ayarlarından dil algıla
-      caches: ['localStorage'] // Dil tercihini localStorage'da sakla
-    },
+    fallbackLng: 'tr', // Varsayılan dil
+    debug: true,
     interpolation: {
-      escapeValue: false // XSS saldırılarına karşı React zaten önlem alıyor
+      escapeValue: false // React zaten XSS'e karşı koruma sağlıyor
     }
   });
 
