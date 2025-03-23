@@ -34,11 +34,6 @@ export default function AuthPage() {
   const [_, navigate] = useLocation();
   const { user, loginMutation, registerMutation } = useAuth();
   
-  // Redirect if already logged in
-  if (user) {
-    return <Redirect to="/" />;
-  }
-
   const loginForm = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -58,6 +53,11 @@ export default function AuthPage() {
       role: "staff",
     },
   });
+  
+  // Redirect if already logged in - moved after all hooks are called
+  if (user) {
+    return <Redirect to="/" />;
+  }
 
   function onLoginSubmit(values: z.infer<typeof loginSchema>) {
     loginMutation.mutate(values, {
