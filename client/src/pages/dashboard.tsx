@@ -7,7 +7,7 @@ import ExpiringMemberships from "@/components/dashboard/expiring-memberships";
 import MembershipStats from "@/components/dashboard/membership-stats";
 import WelcomeCard from "@/components/dashboard/welcome-card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Users, CheckCheck, DollarSign, Calendar, Plus, UserPlus, CreditCard, CheckIn } from "lucide-react";
+import { Users, CheckCheck, DollarSign, Calendar, Plus, UserPlus, CreditCard, PlusCircle, Timer } from "lucide-react";
 import { QuickActionButton, QuickActionButtonGroup } from "@/components/ui/quick-action-button";
 import { useLocation } from "wouter";
 
@@ -36,6 +36,66 @@ export default function Dashboard() {
         <div className="mb-6">
           <h1 className="text-2xl font-semibold text-gray-900">Dashboard</h1>
           <p className="mt-1 text-sm text-gray-500">Here's what's happening with your gym today.</p>
+        </div>
+        
+        {/* Welcome Card */}
+        <div className="mb-6">
+          {isLoading ? (
+            <Skeleton className="h-32" />
+          ) : (
+            <WelcomeCard />
+          )}
+        </div>
+        
+        {/* Quick Action Buttons */}
+        <div className="mb-8">
+          <h2 className="text-lg font-medium text-gray-900 mb-4">Quick Actions</h2>
+          <QuickActionButtonGroup>
+            <QuickActionButton 
+              title="Add Member" 
+              onClick={() => navigate('/members')}
+              variant="success"
+              description="Register new member"
+            >
+              <UserPlus />
+            </QuickActionButton>
+            
+            <QuickActionButton 
+              title="Check-in" 
+              onClick={() => navigate('/attendance')}
+              variant="info"
+              description="Member attendance"
+            >
+              <Timer />
+            </QuickActionButton>
+            
+            <QuickActionButton 
+              title="Take Payment" 
+              onClick={() => navigate('/payments')}
+              variant="warning"
+              description="Record payment"
+            >
+              <CreditCard />
+            </QuickActionButton>
+            
+            <QuickActionButton 
+              title="New Plan" 
+              onClick={() => navigate('/memberships')}
+              variant="default"
+              description="Create membership"
+            >
+              <PlusCircle />
+            </QuickActionButton>
+            
+            <QuickActionButton 
+              title="Add Equipment" 
+              onClick={() => navigate('/equipment')}
+              variant="danger"
+              description="Equipment inventory"
+            >
+              <Plus />
+            </QuickActionButton>
+          </QuickActionButtonGroup>
         </div>
 
         {/* Stats cards */}
@@ -67,7 +127,7 @@ export default function Dashboard() {
               />
               <StatsCard
                 title="Monthly Revenue"
-                value={`$${dashboardData?.monthlyRevenue.toFixed(2) || "0.00"}`}
+                value={`$${dashboardData?.monthlyRevenue?.toFixed(2) || "0.00"}`}
                 change={8}
                 changeType="increase"
                 icon={<DollarSign className="w-6 h-6 text-white" />}
