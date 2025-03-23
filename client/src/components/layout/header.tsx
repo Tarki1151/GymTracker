@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Bell, ChevronDown, Menu, Search } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Bell, ChevronDown, Menu, Search, Settings } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import {
   DropdownMenu,
@@ -11,15 +11,42 @@ import {
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useToast } from "@/hooks/use-toast";
 import { useLocation } from "wouter";
+import { useQuery } from "@tanstack/react-query";
 
 type HeaderProps = {
   onOpenSidebar: () => void;
+};
+
+// Setting türü
+type Setting = {
+  id: number;
+  key: string;
+  value: string;
+  updatedAt: string;
 };
 
 export default function Header({ onOpenSidebar }: HeaderProps) {
   const { user, logoutMutation } = useAuth();
   const { toast } = useToast();
   const [_, navigate] = useLocation();
+  
+  // Varsayılan uygulama adı
+  const [appName, setAppName] = useState("Gymify");
+  
+  // Ayarlardan uygulama adını al
+  const { data: settings } = useQuery<Setting[]>({ 
+    queryKey: ['/api/settings']
+  });
+  
+  // Ayarlar yüklendiğinde uygulama adını güncelle
+  useEffect(() => {
+    if (settings) {
+      const appNameSetting = settings.find(setting => setting.key === 'appName');
+      if (appNameSetting) {
+        setAppName(appNameSetting.value);
+      }
+    }
+  }, [settings]);
 
   const handleLogout = () => {
     logoutMutation.mutate(undefined, {
@@ -46,6 +73,9 @@ export default function Header({ onOpenSidebar }: HeaderProps) {
         >
           <Menu className="w-6 h-6" />
         </button>
+        
+        {/* Uygulama adı */}
+        <h1 className="hidden lg:block text-xl font-semibold text-primary mr-6">{appName}</h1>
 
         <div className="relative mx-4 lg:mx-0">
           <span className="absolute inset-y-0 left-0 flex items-center pl-3">
@@ -78,7 +108,10 @@ export default function Header({ onOpenSidebar }: HeaderProps) {
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuItem>Profile</DropdownMenuItem>
-            <DropdownMenuItem>Account Settings</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => navigate("/settings")}>
+              Settings
+              <Settings className="w-4 h-4 ml-2" />
+            </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleLogout}>Logout</DropdownMenuItem>
           </DropdownMenuContent>

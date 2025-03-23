@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import MainLayout from "@/components/layout/main-layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,6 +21,8 @@ import {
 } from "@/components/ui/tabs";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
+import { apiRequest, queryClient } from "@/lib/queryClient";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import {
   Settings as SettingsIcon,
   User,
@@ -32,18 +34,97 @@ import {
   Mail,
   Users,
   Shield,
+  Loader2,
 } from "lucide-react";
+
+// Ayar değerlerini getirmek için type
+type Setting = {
+  id: number;
+  key: string;
+  value: string;
+  updatedAt: string;
+};
 
 export default function Settings() {
   const [activeTab, setActiveTab] = useState("profile");
   const { user } = useAuth();
   const { toast } = useToast();
+  
+  // Ayar değerleri için state
+  const [appName, setAppName] = useState("Gymify");
+  const [businessHours, setBusinessHours] = useState("6:00 AM - 10:00 PM");
+  const [contactEmail, setContactEmail] = useState("contact@gymify.com");
+  const [maintenanceMode, setMaintenanceMode] = useState("false");
+  
+  // Ayarları getirmek için query
+  const { data: settings, isLoading: isLoadingSettings } = useQuery<Setting[]>({ 
+    queryKey: ['/api/settings']
+  });
+  
+  // Ayarları değişkenlere atama
+  useEffect(() => {
+    if (settings) {
+      settings.forEach(setting => {
+        if (setting.key === 'appName') setAppName(setting.value);
+        if (setting.key === 'businessHours') setBusinessHours(setting.value);
+        if (setting.key === 'contactEmail') setContactEmail(setting.value);
+        if (setting.key === 'maintenanceMode') setMaintenanceMode(setting.value);
+      });
+    }
+  }, [settings]);
+  
+  // Ayar güncellemek için mutation
+  const updateSettingMutation = useMutation({
+    mutationFn: async ({ key, value }: { key: string; value: string }) => {
+      const res = await apiRequest('PATCH', `/api/settings/${key}`, { value });
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/settings'] });
+    },
+    onError: (error: Error) => {
+      console.error('Error updating setting:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to update settings: ' + error.message,
+        variant: 'destructive'
+      });
+    }
+  });
 
+  // Sistem ayarlarını kaydetme işlemi
+  const handleSystemSave = async () => {
+    try {
+      // Her ayarı asenkron olarak güncelle
+      await updateSettingMutation.mutateAsync({ key: 'appName', value: appName });
+      await updateSettingMutation.mutateAsync({ key: 'businessHours', value: businessHours });
+      await updateSettingMutation.mutateAsync({ key: 'contactEmail', value: contactEmail });
+      await updateSettingMutation.mutateAsync({ key: 'maintenanceMode', value: maintenanceMode });
+      
+      toast({
+        title: "Settings saved",
+        description: "System settings have been updated successfully",
+      });
+    } catch (error) {
+      console.error("Failed to save settings:", error);
+      toast({
+        title: "Error",
+        description: "Failed to save settings. Please try again.",
+        variant: "destructive"
+      });
+    }
+  };
+  
+  // Diğer ayarlar için genel kaydetme işlemi
   const handleSave = () => {
-    toast({
-      title: "Settings saved",
-      description: "Your settings have been saved successfully",
-    });
+    if (activeTab === "system") {
+      handleSystemSave();
+    } else {
+      toast({
+        title: "Settings saved",
+        description: "Your settings have been saved successfully",
+      });
+    }
   };
 
   const isAdmin = user?.role === "admin";
@@ -284,19 +365,32 @@ export default function Settings() {
                 <CardContent className="space-y-6">
                   <div className="space-y-4">
                     <div>
-                      <Label htmlFor="gymName">Gym Name</Label>
-                      <Input id="gymName" defaultValue="Gymify Fitness Center" />
+                      <Label htmlFor="appName">Gym Name</Label>
+                      <Input 
+                        id="appName" 
+                        value={appName} 
+                        onChange={(e) => setAppName(e.target.value)}
+                      />
                     </div>
                     
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <Label htmlFor="businessHours">Business Hours</Label>
-                        <Input id="businessHours" defaultValue="6:00 AM - 10:00 PM" />
+                        <Input 
+                          id="businessHours" 
+                          value={businessHours} 
+                          onChange={(e) => setBusinessHours(e.target.value)}
+                        />
                       </div>
                       
                       <div>
                         <Label htmlFor="contactEmail">Contact Email</Label>
-                        <Input id="contactEmail" type="email" defaultValue="contact@gymify.com" />
+                        <Input 
+                          id="contactEmail" 
+                          type="email" 
+                          value={contactEmail} 
+                          onChange={(e) => setContactEmail(e.target.value)}
+                        />
                       </div>
                     </div>
                     
@@ -309,7 +403,11 @@ export default function Settings() {
                           </div>
                           <p className="text-sm text-gray-500">Temporarily disable the system for maintenance</p>
                         </div>
-                        <Switch id="maintenanceMode" />
+                        <Switch 
+                          id="maintenanceMode" 
+                          checked={maintenanceMode === "true"} 
+                          onCheckedChange={(checked) => setMaintenanceMode(checked ? "true" : "false")}
+                        />
                       </div>
                     </div>
                     
