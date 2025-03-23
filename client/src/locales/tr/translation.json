@@ -13,7 +13,8 @@
     "back": "Geri",
     "next": "İleri",
     "submit": "Gönder",
-    "loading": "Yükleniyor..."
+    "loading": "Yükleniyor...",
+    "adminModeMessage": "Tüm özelliklere erişiminiz var"
   },
   "auth": {
     "login": "Giriş Yap",

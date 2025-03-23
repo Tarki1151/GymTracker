@@ -1,6 +1,7 @@
 import { Link, useLocation } from "wouter";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/use-auth";
+import { useTranslation } from "react-i18next";
 import {
   Home,
   Users,
@@ -12,15 +13,15 @@ import {
   Dumbbell
 } from "lucide-react";
 
-const navigation = [
-  { name: 'Dashboard', href: '/', icon: Home },
-  { name: 'Members', href: '/members', icon: Users },
-  { name: 'Memberships', href: '/memberships', icon: Tags },
-  { name: 'Payments', href: '/payments', icon: DollarSign },
-  { name: 'Attendance', href: '/attendance', icon: Calendar },
-  { name: 'Reports', href: '/reports', icon: BarChart2 },
-  { name: 'Equipment', href: '/equipment', icon: Dumbbell },
-  { name: 'Settings', href: '/settings', icon: Settings },
+const getNavigation = (t: any) => [
+  { name: t('dashboard.title'), href: '/', icon: Home },
+  { name: t('members.title'), href: '/members', icon: Users },
+  { name: t('memberships.title'), href: '/memberships', icon: Tags },
+  { name: t('payments.title'), href: '/payments', icon: DollarSign },
+  { name: t('attendance.title'), href: '/attendance', icon: Calendar },
+  { name: t('reports.title'), href: '/reports', icon: BarChart2 },
+  { name: t('equipment.title'), href: '/equipment', icon: Dumbbell },
+  { name: t('settings.title'), href: '/settings', icon: Settings },
 ];
 
 type SidebarProps = {
@@ -31,6 +32,7 @@ type SidebarProps = {
 export default function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
   const [location] = useLocation();
   const { user } = useAuth();
+  const { t } = useTranslation();
 
   return (
     <>
@@ -57,7 +59,7 @@ export default function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
         </div>
 
         <nav className="mt-8 space-y-1 px-2">
-          {navigation.map((item) => {
+          {getNavigation(t).map((item) => {
             const isActive = location === item.href;
             return (
               <Link
@@ -87,7 +89,7 @@ export default function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
           <div className="px-4 mt-8">
             <div className="py-2 px-3 bg-blue-50 rounded-md border border-blue-200">
               <div className="text-xs font-semibold text-blue-800">ADMIN MODE</div>
-              <div className="text-xs text-blue-600 mt-1">You have full access to all features</div>
+              <div className="text-xs text-blue-600 mt-1">{t('common.adminModeMessage')}</div>
             </div>
           </div>
         )}
