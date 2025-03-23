@@ -73,7 +73,7 @@ export interface IStorage {
   createActivityLog(log: InsertActivityLog): Promise<ActivityLog>;
   
   // Session store
-  sessionStore: session.SessionStore;
+  sessionStore: any;
 }
 
 export class MemStorage implements IStorage {
@@ -99,7 +99,7 @@ export class MemStorage implements IStorage {
   private equipmentIdCounter: number;
   private activityLogIdCounter: number;
   
-  sessionStore: session.SessionStore;
+  sessionStore: any;
 
   constructor() {
     this.settingsData = new Map();
@@ -501,7 +501,554 @@ export class MemStorage implements IStorage {
   }
 }
 
-export const storage = new MemStorage();
+// PostgreSQL tabanlı veritabanı depolama sınıfı
+export class DatabaseStorage implements IStorage {
+  sessionStore: any;
+
+  constructor() {
+    this.sessionStore = new PostgresSessionStore({
+      conObject: {
+        connectionString: process.env.DATABASE_URL,
+      },
+      createTableIfMissing: true
+    });
+    
+    // Initialize database with sample data
+    this.initializeData();
+  }
+  
+  // Veritabanını örnek verilerle başlatma
+  private async initializeData() {
+    try {
+      // 1. Check if default data already exists
+      const existingPlans = await this.getMembershipPlans();
+      
+      // 2. Create default membership plans if none exist
+      if (existingPlans.length === 0) {
+        await this.createMembershipPlan({
+          name: "Temel Aylık",
+          description: "Standart ekipman erişimi ile temel spor salonu girişi",
+          duration: 30,
+          price: "500",
+          active: true
+        });
+        
+        await this.createMembershipPlan({
+          name: "Premium Aylık",
+          description: "Tüm spor salonu tesislerine ve derslere tam erişim",
+          duration: 30,
+          price: "800",
+          active: true
+        });
+        
+        await this.createMembershipPlan({
+          name: "Temel Yıllık",
+          description: "Standart ekipman erişimi ile temel spor salonu girişi, yıllık indirim",
+          duration: 365,
+          price: "5000",
+          active: true
+        });
+        
+        await this.createMembershipPlan({
+          name: "Elite Üç Aylık",
+          description: "Kişisel antrenör seansları ile tüm tesislere tam erişim",
+          duration: 90,
+          price: "2000",
+          active: true
+        });
+      }
+      
+      // 3. Create default settings if they don't exist
+      const appNameSetting = await this.getSetting('appName');
+      if (!appNameSetting) {
+        await this.createSetting({ key: 'appName', value: 'TARABYA MARTE Fight Academy' });
+      }
+      
+      const contactEmailSetting = await this.getSetting('contactEmail');
+      if (!contactEmailSetting) {
+        await this.createSetting({ key: 'contactEmail', value: 'info@tarabyamarte.com' });
+      }
+      
+      const contactPhoneSetting = await this.getSetting('contactPhone');
+      if (!contactPhoneSetting) {
+        await this.createSetting({ key: 'contactPhone', value: '+90 555 123 4567' });
+      }
+      
+      const addressSetting = await this.getSetting('address');
+      if (!addressSetting) {
+        await this.createSetting({ key: 'address', value: 'Tarabya, İstanbul, Türkiye' });
+      }
+      
+      // 4. Örnek ekipman verileri ekle
+      const existingEquipment = await this.getAllEquipment();
+      if (existingEquipment.length === 0) {
+        await this.createEquipment({
+          name: "Boks Eldiveni",
+          category: "Boks Ekipmanı",
+          status: "İyi Durumda",
+          notes: "Yeni alındı, sınıf kullanımı için",
+          purchaseDate: "2024-01-15",
+          purchasePrice: "1500",
+          maintenanceDate: "2024-06-15"
+        });
+        
+        await this.createEquipment({
+          name: "Kum Torbası",
+          category: "Boks Ekipmanı",
+          status: "İyi Durumda",
+          notes: "Ağır kullanım için dayanıklı, 50kg",
+          purchaseDate: "2023-11-20",
+          purchasePrice: "3500",
+          maintenanceDate: "2024-05-20"
+        });
+        
+        await this.createEquipment({
+          name: "Dövüş Minderi",
+          category: "Güreş/BJJ Ekipmanı",
+          status: "İyi Durumda",
+          notes: "10x10 metre, sınıf kullanımı için",
+          purchaseDate: "2023-08-10",
+          purchasePrice: "25000",
+          maintenanceDate: "2024-08-10"
+        });
+        
+        await this.createEquipment({
+          name: "Muay Thai Şortu",
+          category: "Giyim",
+          status: "İyi Durumda",
+          notes: "Çeşitli boyutlarda mevcut",
+          purchaseDate: "2024-02-05",
+          purchasePrice: "800",
+          maintenanceDate: null
+        });
+        
+        await this.createEquipment({
+          name: "Koşu Bandı",
+          category: "Kardio Ekipmanı",
+          status: "Tamir Gerekli",
+          notes: "Ekran arızalı, tamir için bakımda",
+          purchaseDate: "2022-05-15",
+          purchasePrice: "15000",
+          maintenanceDate: "2024-03-01"
+        });
+      }
+      
+      // 5. Örnek üyeler ekle
+      const existingMembers = await this.getMembers();
+      if (existingMembers.length === 0) {
+        await this.createMember({
+          fullName: "Ahmet Yılmaz",
+          email: "ahmet@example.com",
+          phone: "+90 555 111 2233",
+          address: "Beşiktaş, İstanbul",
+          dateOfBirth: "1992-05-15",
+          gender: "Erkek",
+          emergencyContact: "Ayşe Yılmaz",
+          emergencyPhone: "+90 555 111 2234",
+          notes: "Boks ve MMA ile ilgileniyor",
+          active: true
+        });
+        
+        await this.createMember({
+          fullName: "Zeynep Kaya",
+          email: "zeynep@example.com",
+          phone: "+90 555 222 3344",
+          address: "Kadıköy, İstanbul",
+          dateOfBirth: "1995-08-20",
+          gender: "Kadın",
+          emergencyContact: "Mehmet Kaya",
+          emergencyPhone: "+90 555 222 3345",
+          notes: "BJJ ve Kickbox derslerine katılıyor",
+          active: true
+        });
+        
+        await this.createMember({
+          fullName: "Murat Demir",
+          email: "murat@example.com",
+          phone: "+90 555 333 4455",
+          address: "Sarıyer, İstanbul",
+          dateOfBirth: "1990-02-10",
+          gender: "Erkek",
+          emergencyContact: "Selin Demir",
+          emergencyPhone: "+90 555 333 4456",
+          notes: "Yalnızca akşam antrenmanlarına katılabiliyor",
+          active: true
+        });
+        
+        await this.createMember({
+          fullName: "Ayşe Şahin",
+          email: "ayse@example.com",
+          phone: "+90 555 444 5566",
+          address: "Bakırköy, İstanbul",
+          dateOfBirth: "1997-11-25",
+          gender: "Kadın",
+          emergencyContact: "Ali Şahin",
+          emergencyPhone: "+90 555 444 5567",
+          notes: "Muay Thai üzerine yoğunlaşıyor",
+          active: true
+        });
+        
+        await this.createMember({
+          fullName: "Kemal Öztürk",
+          email: "kemal@example.com",
+          phone: "+90 555 555 6677",
+          address: "Taksim, İstanbul",
+          dateOfBirth: "1988-07-30",
+          gender: "Erkek",
+          emergencyContact: "Deniz Öztürk",
+          emergencyPhone: "+90 555 555 6678",
+          notes: "Eski profesyonel boksör, şimdi hobi olarak devam ediyor",
+          active: false
+        });
+      }
+    } catch (error) {
+      console.error("Database initialization error:", error);
+    }
+  }
+
+  // User methods
+  async getUser(id: number): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user || undefined;
+  }
+
+  async getUserByUsername(username: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.username, username));
+    return user || undefined;
+  }
+
+  async createUser(user: InsertUser): Promise<User> {
+    const [newUser] = await db.insert(users).values({
+      ...user,
+      createdAt: new Date()
+    }).returning();
+    return newUser;
+  }
+
+  // Member methods
+  async getMember(id: number): Promise<Member | undefined> {
+    const [member] = await db.select().from(members).where(eq(members.id, id));
+    return member || undefined;
+  }
+
+  async getMembers(): Promise<Member[]> {
+    return db.select().from(members);
+  }
+
+  async createMember(member: InsertMember): Promise<Member> {
+    const [newMember] = await db.insert(members).values({
+      ...member,
+      createdAt: new Date()
+    }).returning();
+    
+    // Log activity
+    await this.createActivityLog({
+      action: "member_added",
+      description: `New member added: ${member.fullName}`,
+      entityId: newMember.id,
+      entityType: "members"
+    });
+    
+    return newMember;
+  }
+
+  async updateMember(id: number, memberUpdate: Partial<InsertMember>): Promise<Member | undefined> {
+    const [updatedMember] = await db.update(members)
+      .set(memberUpdate)
+      .where(eq(members.id, id))
+      .returning();
+    
+    if (updatedMember) {
+      // Log activity
+      await this.createActivityLog({
+        action: "member_updated",
+        description: `Member updated: ${updatedMember.fullName}`,
+        entityId: id,
+        entityType: "members"
+      });
+    }
+    
+    return updatedMember || undefined;
+  }
+  
+  // Membership Plan methods
+  async getMembershipPlan(id: number): Promise<MembershipPlan | undefined> {
+    const [plan] = await db.select().from(membershipPlans).where(eq(membershipPlans.id, id));
+    return plan || undefined;
+  }
+  
+  async getMembershipPlans(): Promise<MembershipPlan[]> {
+    return db.select().from(membershipPlans);
+  }
+  
+  async createMembershipPlan(plan: InsertMembershipPlan): Promise<MembershipPlan> {
+    const [newPlan] = await db.insert(membershipPlans).values({
+      ...plan,
+      createdAt: new Date()
+    }).returning();
+    
+    // Log activity
+    await this.createActivityLog({
+      action: "plan_added",
+      description: `New membership plan added: ${plan.name}`,
+      entityId: newPlan.id,
+      entityType: "membership_plans"
+    });
+    
+    return newPlan;
+  }
+  
+  async updateMembershipPlan(id: number, planUpdate: Partial<InsertMembershipPlan>): Promise<MembershipPlan | undefined> {
+    const [updatedPlan] = await db.update(membershipPlans)
+      .set(planUpdate)
+      .where(eq(membershipPlans.id, id))
+      .returning();
+    
+    if (updatedPlan) {
+      // Log activity
+      await this.createActivityLog({
+        action: "plan_updated",
+        description: `Membership plan updated: ${updatedPlan.name}`,
+        entityId: id,
+        entityType: "membership_plans"
+      });
+    }
+    
+    return updatedPlan || undefined;
+  }
+  
+  // Subscription methods
+  async getSubscription(id: number): Promise<Subscription | undefined> {
+    const [subscription] = await db.select().from(subscriptions).where(eq(subscriptions.id, id));
+    return subscription || undefined;
+  }
+  
+  async getSubscriptions(): Promise<Subscription[]> {
+    return db.select().from(subscriptions);
+  }
+  
+  async getMemberSubscriptions(memberId: number): Promise<Subscription[]> {
+    return db.select().from(subscriptions).where(eq(subscriptions.memberId, memberId));
+  }
+  
+  async createSubscription(subscription: InsertSubscription): Promise<Subscription> {
+    const [newSubscription] = await db.insert(subscriptions).values({
+      ...subscription,
+      createdAt: new Date()
+    }).returning();
+    
+    // Log activity
+    const member = await this.getMember(subscription.memberId);
+    const plan = await this.getMembershipPlan(subscription.planId);
+    await this.createActivityLog({
+      action: "subscription_added",
+      description: `New subscription added for ${member?.fullName || 'Unknown'}: ${plan?.name || 'Unknown'}`,
+      entityId: newSubscription.id,
+      entityType: "subscriptions"
+    });
+    
+    return newSubscription;
+  }
+  
+  async updateSubscription(id: number, subscriptionUpdate: Partial<InsertSubscription>): Promise<Subscription | undefined> {
+    const [updatedSubscription] = await db.update(subscriptions)
+      .set(subscriptionUpdate)
+      .where(eq(subscriptions.id, id))
+      .returning();
+    
+    if (updatedSubscription) {
+      // Log activity
+      await this.createActivityLog({
+        action: "subscription_updated",
+        description: `Subscription updated: ID ${id}`,
+        entityId: id,
+        entityType: "subscriptions"
+      });
+    }
+    
+    return updatedSubscription || undefined;
+  }
+  
+  // Payment methods
+  async getPayment(id: number): Promise<Payment | undefined> {
+    const [payment] = await db.select().from(payments).where(eq(payments.id, id));
+    return payment || undefined;
+  }
+  
+  async getPayments(): Promise<Payment[]> {
+    return db.select().from(payments);
+  }
+  
+  async getMemberPayments(memberId: number): Promise<Payment[]> {
+    return db.select().from(payments).where(eq(payments.memberId, memberId));
+  }
+  
+  async createPayment(payment: InsertPayment): Promise<Payment> {
+    const [newPayment] = await db.insert(payments).values({
+      ...payment,
+      createdAt: new Date()
+    }).returning();
+    
+    // Log activity
+    const member = await this.getMember(payment.memberId);
+    await this.createActivityLog({
+      action: "payment_received",
+      description: `Payment received from ${member?.fullName || 'Unknown'}: $${payment.amount}`,
+      entityId: newPayment.id,
+      entityType: "payments"
+    });
+    
+    return newPayment;
+  }
+  
+  // Attendance methods
+  async getAttendance(id: number): Promise<Attendance | undefined> {
+    const [record] = await db.select().from(attendance).where(eq(attendance.id, id));
+    return record || undefined;
+  }
+  
+  async getAttendanceRecords(): Promise<Attendance[]> {
+    return db.select().from(attendance);
+  }
+  
+  async getMemberAttendance(memberId: number): Promise<Attendance[]> {
+    return db.select().from(attendance).where(eq(attendance.memberId, memberId));
+  }
+  
+  async createAttendance(attendanceRecord: InsertAttendance): Promise<Attendance> {
+    const [newAttendance] = await db.insert(attendance).values({
+      ...attendanceRecord,
+      checkOutTime: null,
+      createdAt: new Date()
+    }).returning();
+    
+    // Log activity
+    const member = await this.getMember(attendanceRecord.memberId);
+    await this.createActivityLog({
+      action: "check_in",
+      description: `${member?.fullName || 'Unknown'} checked in`,
+      entityId: newAttendance.id,
+      entityType: "attendance"
+    });
+    
+    return newAttendance;
+  }
+  
+  async updateAttendance(id: number, attendanceUpdate: Partial<Attendance>): Promise<Attendance | undefined> {
+    const [updatedAttendance] = await db.update(attendance)
+      .set(attendanceUpdate)
+      .where(eq(attendance.id, id))
+      .returning();
+    
+    if (updatedAttendance && attendanceUpdate.checkOutTime) {
+      // Log check-out activity
+      const member = await this.getMember(updatedAttendance.memberId);
+      await this.createActivityLog({
+        action: "check_out",
+        description: `${member?.fullName || 'Unknown'} checked out`,
+        entityId: id,
+        entityType: "attendance"
+      });
+    }
+    
+    return updatedAttendance || undefined;
+  }
+  
+  // Equipment methods
+  async getEquipment(id: number): Promise<Equipment | undefined> {
+    const [item] = await db.select().from(equipment).where(eq(equipment.id, id));
+    return item || undefined;
+  }
+  
+  async getAllEquipment(): Promise<Equipment[]> {
+    return db.select().from(equipment);
+  }
+  
+  async createEquipment(equipmentItem: InsertEquipment): Promise<Equipment> {
+    const [newEquipment] = await db.insert(equipment).values({
+      ...equipmentItem,
+      createdAt: new Date()
+    }).returning();
+    
+    // Log activity
+    await this.createActivityLog({
+      action: "equipment_added",
+      description: `New equipment added: ${equipmentItem.name}`,
+      entityId: newEquipment.id,
+      entityType: "equipment"
+    });
+    
+    return newEquipment;
+  }
+  
+  async updateEquipment(id: number, equipmentUpdate: Partial<InsertEquipment>): Promise<Equipment | undefined> {
+    const [updatedEquipment] = await db.update(equipment)
+      .set(equipmentUpdate)
+      .where(eq(equipment.id, id))
+      .returning();
+    
+    if (updatedEquipment) {
+      // Log activity
+      await this.createActivityLog({
+        action: "equipment_updated",
+        description: `Equipment updated: ${updatedEquipment.name}`,
+        entityId: id,
+        entityType: "equipment"
+      });
+    }
+    
+    return updatedEquipment || undefined;
+  }
+  
+  // Settings methods
+  async getSetting(key: string): Promise<Setting | undefined> {
+    const [setting] = await db.select().from(settings).where(eq(settings.key, key));
+    return setting || undefined;
+  }
+  
+  async getSettings(): Promise<Setting[]> {
+    return db.select().from(settings);
+  }
+  
+  async createSetting(setting: InsertSetting): Promise<Setting> {
+    const [newSetting] = await db.insert(settings).values({
+      ...setting,
+      updatedAt: new Date()
+    }).returning();
+    return newSetting;
+  }
+  
+  async updateSetting(key: string, value: string): Promise<Setting | undefined> {
+    const [setting] = await db.select().from(settings).where(eq(settings.key, key));
+    
+    if (!setting) {
+      return this.createSetting({ key, value });
+    }
+    
+    const [updatedSetting] = await db.update(settings)
+      .set({ value, updatedAt: new Date() })
+      .where(eq(settings.key, key))
+      .returning();
+    
+    return updatedSetting;
+  }
+  
+  // Activity Log methods
+  async getActivityLogs(): Promise<ActivityLog[]> {
+    return db.select().from(activityLogs).orderBy(desc(activityLogs.timestamp));
+  }
+  
+  async createActivityLog(log: InsertActivityLog): Promise<ActivityLog> {
+    const [newLog] = await db.insert(activityLogs).values({
+      ...log,
+      timestamp: new Date()
+    }).returning();
+    return newLog;
+  }
+}
+
+// Veritabanı depolama sınıfını kullan
+export const storage = new DatabaseStorage();
 
 // Varsayılan ayarları oluştur
 (async () => {
