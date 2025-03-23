@@ -13,7 +13,8 @@
     "back": "Zurück",
     "next": "Weiter",
     "submit": "Absenden",
-    "loading": "Laden..."
+    "loading": "Laden...",
+    "adminModeMessage": "Sie haben vollen Zugriff auf alle Funktionen"
   },
   "auth": {
     "login": "Anmelden",

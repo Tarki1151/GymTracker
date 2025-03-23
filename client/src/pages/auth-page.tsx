@@ -16,6 +16,8 @@ import { useAuth } from "@/hooks/use-auth";
 import { Loader2 } from "lucide-react";
 import { Redirect, useLocation } from "wouter";
 import { insertUserSchema } from "@shared/schema";
+import { useTranslation } from "react-i18next";
+import { LanguageSwitcher } from "@/components/ui/language-switcher";
 
 const loginSchema = z.object({
   username: z.string().min(3, "Username must be at least 3 characters"),
@@ -33,6 +35,7 @@ const registerSchema = insertUserSchema.extend({
 export default function AuthPage() {
   const [_, navigate] = useLocation();
   const { user, loginMutation, registerMutation } = useAuth();
+  const { t } = useTranslation();
   
   const loginForm = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
@@ -81,17 +84,21 @@ export default function AuthPage() {
       {/* Left side - Forms */}
       <div className="flex-1 flex flex-col justify-center px-4 py-12 sm:px-6 lg:px-20 xl:px-24 bg-white">
         <div className="mx-auto w-full max-w-sm lg:w-96">
+          <div className="absolute top-4 left-4">
+            <LanguageSwitcher />
+          </div>
+          
           <div className="text-center mb-8">
-            <h2 className="text-3xl font-extrabold text-gray-900">Gymify</h2>
+            <h2 className="text-3xl font-extrabold text-gray-900">{t('auth.loginTitle')}</h2>
             <p className="mt-2 text-sm text-gray-600">
-              Comprehensive Gym Management System
+              {t('auth.loginSubtitle')}
             </p>
           </div>
 
           <Tabs defaultValue="login" className="w-full">
             <TabsList className="grid w-full grid-cols-2 mb-8">
-              <TabsTrigger value="login">Login</TabsTrigger>
-              <TabsTrigger value="register">Register</TabsTrigger>
+              <TabsTrigger value="login">{t('auth.login')}</TabsTrigger>
+              <TabsTrigger value="register">{t('auth.register')}</TabsTrigger>
             </TabsList>
 
             <TabsContent value="login">
@@ -102,9 +109,9 @@ export default function AuthPage() {
                     name="username"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Username</FormLabel>
+                        <FormLabel>{t('auth.username')}</FormLabel>
                         <FormControl>
-                          <Input placeholder="Enter your username" {...field} />
+                          <Input placeholder={t('auth.username')} {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -116,9 +123,9 @@ export default function AuthPage() {
                     name="password"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Password</FormLabel>
+                        <FormLabel>{t('auth.password')}</FormLabel>
                         <FormControl>
-                          <Input type="password" placeholder="Enter your password" {...field} />
+                          <Input type="password" placeholder={t('auth.password')} {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -151,9 +158,9 @@ export default function AuthPage() {
                     name="username"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Username</FormLabel>
+                        <FormLabel>{t('auth.username')}</FormLabel>
                         <FormControl>
-                          <Input placeholder="Choose a username" {...field} />
+                          <Input placeholder={t('auth.username')} {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -165,9 +172,9 @@ export default function AuthPage() {
                     name="fullName"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Full Name</FormLabel>
+                        <FormLabel>{t('auth.fullName')}</FormLabel>
                         <FormControl>
-                          <Input placeholder="Your full name" {...field} />
+                          <Input placeholder={t('auth.fullName')} {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -179,9 +186,9 @@ export default function AuthPage() {
                     name="email"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Email</FormLabel>
+                        <FormLabel>{t('auth.email')}</FormLabel>
                         <FormControl>
-                          <Input type="email" placeholder="Your email address" {...field} />
+                          <Input type="email" placeholder={t('auth.email')} {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
