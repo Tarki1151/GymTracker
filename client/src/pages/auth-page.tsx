@@ -285,8 +285,8 @@ export default function AuthPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 <div>
-                  <h3 className="font-semibold text-lg">Reporting & Analytics</h3>
-                  <p className="text-blue-200 text-sm">Gain insights with comprehensive reports</p>
+                  <h3 className="font-semibold text-lg">{t('auth.featureReporting')}</h3>
+                  <p className="text-blue-200 text-sm">{t('auth.featureReportingDesc')}</p>
                 </div>
               </div>
             </div>

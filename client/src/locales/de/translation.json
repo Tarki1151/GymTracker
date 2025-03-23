@@ -28,7 +28,17 @@
     "loginSubtitle": "Willkommen im Verwaltungssystem",
     "createAccount": "Konto erstellen",
     "alreadyHaveAccount": "Haben Sie bereits ein Konto?",
-    "loginHere": "Hier anmelden"
+    "loginHere": "Hier anmelden",
+    "welcome": "Willkommen bei TARABYA MARTE Fight Academy",
+    "welcomeDescription": "Das umfassende Fitnessstudio-Verwaltungssystem für moderne Sporteinrichtungen",
+    "featureMemberManagement": "Mitgliederverwaltung",
+    "featureMemberManagementDesc": "Verfolgen Sie alle Mitgliedsdetails und Profile",
+    "featureMembershipPlans": "Mitgliedschaftspläne",
+    "featureMembershipPlansDesc": "Erstellen und verwalten Sie Abonnementpläne",
+    "featureAttendance": "Anwesenheitsverfolgung",
+    "featureAttendanceDesc": "Überwachen Sie Ein- und Auscheckvorgänge und Anlagennutzung",
+    "featureReporting": "Berichte und Analysen",
+    "featureReportingDesc": "Gewinnen Sie Einblicke mit umfassenden Berichten"
   },
   "dashboard": {
     "title": "Dashboard",

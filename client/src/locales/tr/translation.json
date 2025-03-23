@@ -28,7 +28,17 @@
     "loginSubtitle": "Yönetim Sistemine Hoş Geldiniz",
     "createAccount": "Hesap Oluştur",
     "alreadyHaveAccount": "Zaten hesabınız var mı?",
-    "loginHere": "Buradan giriş yapın"
+    "loginHere": "Buradan giriş yapın",
+    "welcome": "TARABYA MARTE Fight Academy'ye Hoş Geldiniz",
+    "welcomeDescription": "Modern spor tesisleri için kapsamlı spor salonu yönetim sistemi",
+    "featureMemberManagement": "Üye Yönetimi",
+    "featureMemberManagementDesc": "Tüm üye detaylarını ve profillerini takip edin",
+    "featureMembershipPlans": "Üyelik Planları",
+    "featureMembershipPlansDesc": "Abonelik planları oluşturun ve yönetin",
+    "featureAttendance": "Yoklama Takibi",
+    "featureAttendanceDesc": "Giriş-çıkışları ve tesis kullanımını izleyin",
+    "featureReporting": "Raporlama ve Analiz",
+    "featureReportingDesc": "Kapsamlı raporlarla önemli bilgiler edinin"
   },
   "dashboard": {
     "title": "Gösterge Paneli",
