@@ -67,7 +67,7 @@ export default function Attendance() {
     try {
       await apiRequest("POST", "/api/attendance", {
         memberId: data.memberId,
-        checkInTime: new Date(),
+        checkInTime: new Date().toISOString(),
       });
       queryClient.invalidateQueries({ queryKey: ["/api/attendance"] });
       setShowCheckInModal(false);
@@ -76,6 +76,7 @@ export default function Attendance() {
         description: `Member has been checked in.`,
       });
     } catch (error) {
+      console.error("Check-in error:", error);
       toast({
         title: "Failed to record check-in",
         description: "There was an error recording the check-in. Please try again.",
@@ -87,7 +88,7 @@ export default function Attendance() {
   const handleCheckOut = async (id: number) => {
     try {
       await apiRequest("PATCH", `/api/attendance/${id}`, {
-        checkOutTime: new Date(),
+        checkOutTime: new Date().toISOString(),
       });
       queryClient.invalidateQueries({ queryKey: ["/api/attendance"] });
       toast({
@@ -95,6 +96,7 @@ export default function Attendance() {
         description: `Member has been checked out.`,
       });
     } catch (error) {
+      console.error("Check-out error:", error);
       toast({
         title: "Failed to record check-out",
         description: "There was an error recording the check-out. Please try again.",
