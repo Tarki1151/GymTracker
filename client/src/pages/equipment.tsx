@@ -17,6 +17,7 @@ import { apiRequest, queryClient } from "@/lib/queryClient";
 import { Equipment, InsertEquipment } from "@shared/schema";
 import AddEquipmentForm from "@/components/modals/add-equipment-form";
 import { useToast } from "@/hooks/use-toast";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { 
   Search, 
   Plus, 
@@ -26,13 +27,17 @@ import {
   Calendar,
   DollarSign,
   AlertCircle,
-  CheckCircle2
+  CheckCircle2,
+  Edit,
+  Eye
 } from "lucide-react";
 import { differenceInMonths } from "date-fns";
 
 export default function EquipmentPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [showAddEquipmentModal, setShowAddEquipmentModal] = useState(false);
+  const [selectedEquipment, setSelectedEquipment] = useState<Equipment | null>(null);
+  const [showViewEquipmentModal, setShowViewEquipmentModal] = useState(false);
   const { toast } = useToast();
 
   const { data: equipment, isLoading } = useQuery<Equipment[]>({
@@ -234,6 +239,28 @@ export default function EquipmentPage() {
                             <Button 
                               variant="outline" 
                               size="sm"
+                              onClick={() => {
+                                setSelectedEquipment(item);
+                                setShowViewEquipmentModal(true);
+                              }}
+                            >
+                              <Eye className="h-4 w-4 mr-1" /> View
+                            </Button>
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              onClick={() => {
+                                toast({
+                                  title: "Edit functionality",
+                                  description: "Edit functionality will be implemented in the next update.",
+                                });
+                              }}
+                            >
+                              <Edit className="h-4 w-4 mr-1" /> Edit
+                            </Button>
+                            <Button 
+                              variant="outline" 
+                              size="sm"
                               onClick={() => updateStatusMutation.mutate({ 
                                 id: item.id, 
                                 status: item.status === 'operational' ? 'under maintenance' : 'operational' 
@@ -242,17 +269,17 @@ export default function EquipmentPage() {
                               {item.status === 'operational' ? (
                                 <>
                                   <Wrench className="mr-1 h-4 w-4" />
-                                  Schedule Maintenance
+                                  Maintenance
                                 </>
                               ) : item.status === 'under maintenance' ? (
                                 <>
                                   <CheckCircle2 className="mr-1 h-4 w-4" />
-                                  Mark as Operational
+                                  Operational
                                 </>
                               ) : (
                                 <>
                                   <Wrench className="mr-1 h-4 w-4" />
-                                  Schedule Repair
+                                  Repair
                                 </>
                               )}
                             </Button>
