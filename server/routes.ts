@@ -358,13 +358,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.patch("/api/settings/:key", async (req, res) => {
     try {
       const { key } = req.params;
-      const updateData = updateSettingSchema.parse(req.body);
-      const updatedSetting = await storage.updateSetting(key, updateData.value);
+      // Sadece değer alanını al, body'den doğrudan value property'sini kontrol et
+      const { value } = req.body;
+      
+      if (!value) {
+        return res.status(400).json({ message: "Missing value field" });
+      }
+      
+      const updatedSetting = await storage.updateSetting(key, value);
       if (!updatedSetting) {
         return res.status(404).json({ message: "Setting not found" });
       }
       res.json(updatedSetting);
     } catch (error) {
+      console.error("Setting update error:", error);
       if (error instanceof z.ZodError) {
         return res.status(400).json({ message: "Invalid setting data", errors: error.errors });
       }

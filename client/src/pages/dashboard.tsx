@@ -5,10 +5,14 @@ import MembershipChart from "@/components/dashboard/chart";
 import RecentActivity from "@/components/dashboard/recent-activity";
 import ExpiringMemberships from "@/components/dashboard/expiring-memberships";
 import MembershipStats from "@/components/dashboard/membership-stats";
+import WelcomeCard from "@/components/dashboard/welcome-card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Users, CheckCheck, DollarSign, Calendar } from "lucide-react";
+import { Users, CheckCheck, DollarSign, Calendar, Plus, UserPlus, CreditCard, CheckIn } from "lucide-react";
+import { QuickActionButton, QuickActionButtonGroup } from "@/components/ui/quick-action-button";
+import { useLocation } from "wouter";
 
 export default function Dashboard() {
+  const [_, navigate] = useLocation();
   const { data: dashboardData, isLoading, error } = useQuery({
     queryKey: ["/api/dashboard"],
   });
