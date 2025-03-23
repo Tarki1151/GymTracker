@@ -9,7 +9,8 @@ import {
   insertSubscriptionSchema,
   insertPaymentSchema,
   insertAttendanceSchema,
-  insertEquipmentSchema
+  insertEquipmentSchema,
+  updateSettingSchema
 } from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -328,6 +329,46 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(logs);
     } catch (error) {
       res.status(500).json({ message: "Failed to fetch activity logs" });
+    }
+  });
+  
+  // Settings routes
+  app.get("/api/settings", async (req, res) => {
+    try {
+      const settings = await storage.getSettings();
+      res.json(settings);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch settings" });
+    }
+  });
+  
+  app.get("/api/settings/:key", async (req, res) => {
+    try {
+      const { key } = req.params;
+      const setting = await storage.getSetting(key);
+      if (!setting) {
+        return res.status(404).json({ message: "Setting not found" });
+      }
+      res.json(setting);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch setting" });
+    }
+  });
+  
+  app.patch("/api/settings/:key", async (req, res) => {
+    try {
+      const { key } = req.params;
+      const updateData = updateSettingSchema.parse(req.body);
+      const updatedSetting = await storage.updateSetting(key, updateData.value);
+      if (!updatedSetting) {
+        return res.status(404).json({ message: "Setting not found" });
+      }
+      res.json(updatedSetting);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid setting data", errors: error.errors });
+      }
+      res.status(500).json({ message: "Failed to update setting" });
     }
   });
 

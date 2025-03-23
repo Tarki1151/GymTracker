@@ -6,7 +6,8 @@ import {
   payments, type Payment, type InsertPayment,
   attendance, type Attendance, type InsertAttendance,
   equipment, type Equipment, type InsertEquipment,
-  activityLogs, type ActivityLog, type InsertActivityLog
+  activityLogs, type ActivityLog, type InsertActivityLog,
+  settings, type Setting, type InsertSetting, type UpdateSetting
 } from "@shared/schema";
 import session from "express-session";
 import createMemoryStore from "memorystore";
@@ -14,6 +15,12 @@ import createMemoryStore from "memorystore";
 const MemoryStore = createMemoryStore(session);
 
 export interface IStorage {
+  // Setting methods
+  getSetting(key: string): Promise<Setting | undefined>;
+  getSettings(): Promise<Setting[]>;
+  createSetting(setting: InsertSetting): Promise<Setting>;
+  updateSetting(key: string, value: string): Promise<Setting | undefined>;
+
   // User methods
   getUser(id: number): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
@@ -67,6 +74,7 @@ export interface IStorage {
 
 export class MemStorage implements IStorage {
   // Storage collections
+  private settingsData: Map<string, Setting>;
   private usersData: Map<number, User>;
   private membersData: Map<number, Member>;
   private membershipPlansData: Map<number, MembershipPlan>;
@@ -77,6 +85,7 @@ export class MemStorage implements IStorage {
   private activityLogsData: Map<number, ActivityLog>;
   
   // IDs counters
+  private settingIdCounter: number;
   private userIdCounter: number;
   private memberIdCounter: number;
   private planIdCounter: number;
@@ -89,6 +98,7 @@ export class MemStorage implements IStorage {
   sessionStore: session.SessionStore;
 
   constructor() {
+    this.settingsData = new Map();
     this.usersData = new Map();
     this.membersData = new Map();
     this.membershipPlansData = new Map();
@@ -98,6 +108,7 @@ export class MemStorage implements IStorage {
     this.equipmentData = new Map();
     this.activityLogsData = new Map();
     
+    this.settingIdCounter = 1;
     this.userIdCounter = 1;
     this.memberIdCounter = 1;
     this.planIdCounter = 1;
@@ -439,6 +450,39 @@ export class MemStorage implements IStorage {
     return updatedEquipment;
   }
   
+  // Settings methods
+  async getSetting(key: string): Promise<Setting | undefined> {
+    return Array.from(this.settingsData.values()).find(setting => setting.key === key);
+  }
+  
+  async getSettings(): Promise<Setting[]> {
+    return Array.from(this.settingsData.values());
+  }
+  
+  async createSetting(setting: InsertSetting): Promise<Setting> {
+    const id = this.settingIdCounter++;
+    const newSetting: Setting = { ...setting, id, updatedAt: new Date() };
+    this.settingsData.set(id, newSetting);
+    return newSetting;
+  }
+  
+  async updateSetting(key: string, value: string): Promise<Setting | undefined> {
+    const setting = await this.getSetting(key);
+    if (!setting) return undefined;
+    
+    const updatedSetting = { ...setting, value, updatedAt: new Date() };
+    this.settingsData.set(setting.id, updatedSetting);
+    
+    // Log activity
+    this.createActivityLog({
+      action: "setting_updated",
+      description: `Setting updated: ${key}`,
+      entityType: "settings"
+    });
+    
+    return updatedSetting;
+  }
+  
   // Activity Log methods
   async getActivityLogs(): Promise<ActivityLog[]> {
     return Array.from(this.activityLogsData.values())
@@ -454,3 +498,12 @@ export class MemStorage implements IStorage {
 }
 
 export const storage = new MemStorage();
+
+// Varsayılan ayarları oluştur
+(async () => {
+  // Uygulama adı ayarını ekle (eğer yoksa)
+  const appNameSetting = await storage.getSetting('appName');
+  if (!appNameSetting) {
+    await storage.createSetting({ key: 'appName', value: 'Gymify' });
+  }
+})();

@@ -2,6 +2,14 @@ import { pgTable, text, serial, integer, boolean, timestamp, date, decimal } fro
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
+// Sistem Ayarları
+export const settings = pgTable("settings", {
+  id: serial("id").primaryKey(),
+  key: text("key").notNull().unique(),
+  value: text("value").notNull(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 // Users (Admin and Staff)
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
@@ -136,7 +144,22 @@ export const insertActivityLogSchema = createInsertSchema(activityLogs).omit({
   timestamp: true,
 });
 
+// Settings schema
+export const insertSettingSchema = createInsertSchema(settings).omit({
+  id: true,
+  updatedAt: true,
+});
+
+export const updateSettingSchema = z.object({
+  key: z.string(),
+  value: z.string(),
+});
+
 // Export types
+export type Setting = typeof settings.$inferSelect;
+export type InsertSetting = z.infer<typeof insertSettingSchema>;
+export type UpdateSetting = z.infer<typeof updateSettingSchema>;
+
 export type User = typeof users.$inferSelect;
 export type InsertUser = z.infer<typeof insertUserSchema>;
 

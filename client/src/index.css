@@ -9,7 +9,7 @@
 
   body {
     @apply font-sans antialiased text-foreground;
-    background-color: #f0f0f0; /* Açık gri arka plan */
+    background-color: #e5e7eb; /* Daha belirgin açık gri arka plan - gray-200 */
     min-height: 100vh;
   }
   
