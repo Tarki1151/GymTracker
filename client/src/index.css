@@ -9,5 +9,55 @@
 
   body {
     @apply font-sans antialiased bg-background text-foreground;
+    background-image: linear-gradient(to bottom, #f9fafb, #f3f4f8);
+    min-height: 100vh;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply tracking-tight;
+  }
+}
+
+@layer components {
+  /* Kart hover efektleri */
+  .card-hover {
+    @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
+  }
+  
+  /* Buton hover efektleri */
+  .button-hover {
+    @apply transition-all duration-200 hover:shadow-md active:scale-95;
+  }
+  
+  /* Gradient başlıklar */
+  .gradient-heading {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/50;
+  }
+  
+  /* Pastel arka plan renkleri */
+  .bg-pastel-blue {
+    @apply bg-blue-50;
+  }
+  
+  .bg-pastel-green {
+    @apply bg-green-50;
+  }
+  
+  .bg-pastel-purple {
+    @apply bg-purple-50;
+  }
+  
+  .bg-pastel-pink {
+    @apply bg-pink-50;
+  }
+  
+  /* İçerik alanları için hover efektleri */
+  .content-hover {
+    @apply hover:bg-primary/5 transition-colors duration-200;
+  }
+  
+  /* Tablolar için satır hover efektleri */
+  .table-row-hover {
+    @apply hover:bg-primary/5 transition-colors duration-150;
   }
 }

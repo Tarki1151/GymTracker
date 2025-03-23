@@ -227,10 +227,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/attendance", async (req, res) => {
     try {
-      const attendanceData = insertAttendanceSchema.parse(req.body);
+      // Custom schema validation to handle ISO string for checkInTime
+      const attendanceData = z.object({
+        memberId: z.number(),
+        checkInTime: z.string().transform(val => new Date(val))
+      }).parse(req.body);
+      
       const newAttendance = await storage.createAttendance(attendanceData);
       res.status(201).json(newAttendance);
     } catch (error) {
+      console.error("Attendance error:", error);
       if (error instanceof z.ZodError) {
         return res.status(400).json({ message: "Invalid attendance data", errors: error.errors });
       }
@@ -242,14 +248,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const id = parseInt(req.params.id);
       const attendanceData = z.object({
-        checkOutTime: z.string().optional(),
+        checkOutTime: z.string().transform(val => new Date(val))
       }).parse(req.body);
-      const updatedAttendance = await storage.updateAttendance(id, attendanceData);
+      
+      const updatedAttendance = await storage.updateAttendance(id, {
+        checkOutTime: attendanceData.checkOutTime
+      });
+      
       if (!updatedAttendance) {
         return res.status(404).json({ message: "Attendance record not found" });
       }
       res.json(updatedAttendance);
     } catch (error) {
+      console.error("Check-out error:", error);
       if (error instanceof z.ZodError) {
         return res.status(400).json({ message: "Invalid attendance data", errors: error.errors });
       }

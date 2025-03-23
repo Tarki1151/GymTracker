@@ -13,9 +13,10 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { apiRequest, queryClient } from "@/lib/queryClient";
-import { Attendance as AttendanceType, Member } from "@shared/schema";
+import { Attendance as AttendanceType, Member, insertAttendanceSchema } from "@shared/schema";
 import CheckInForm from "@/components/modals/check-in-form";
 import { useToast } from "@/hooks/use-toast";
+import { format as formatDate } from "date-fns";
 import { 
   Search, 
   ClipboardCheck, 
@@ -165,47 +166,50 @@ export default function Attendance() {
                         : null;
                         
                       return (
-                        <TableRow key={record.id}>
+                        <TableRow key={record.id} className="table-row-hover">
                           <TableCell className="font-medium">
                             <div className="flex items-center gap-3">
-                              <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                                <UserCheck className="h-4 w-4 text-green-600" />
+                              <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
+                                <UserCheck className="h-4 w-4 text-primary" />
                               </div>
                               {record.member?.fullName || "Unknown Member"}
                             </div>
                           </TableCell>
                           <TableCell>
                             <div className="flex items-center gap-2">
-                              <Calendar className="h-4 w-4 text-gray-400" />
-                              {format(new Date(record.checkInTime), 'MMM dd, yyyy')}
+                              <Calendar className="h-4 w-4 text-primary/60" />
+                              {formatDate(new Date(record.checkInTime), 'MMM dd, yyyy')}
                             </div>
                           </TableCell>
                           <TableCell>
                             <div className="flex items-center gap-2">
-                              <LogIn className="h-4 w-4 text-blue-600" />
-                              {format(new Date(record.checkInTime), 'h:mm a')}
+                              <LogIn className="h-4 w-4 text-primary" />
+                              {formatDate(new Date(record.checkInTime), 'h:mm a')}
                             </div>
                           </TableCell>
                           <TableCell>
                             {record.checkOutTime ? (
                               <div className="flex items-center gap-2">
-                                <LogOut className="h-4 w-4 text-red-600" />
-                                {format(new Date(record.checkOutTime), 'h:mm a')}
+                                <LogOut className="h-4 w-4 text-pink-400" />
+                                {formatDate(new Date(record.checkOutTime), 'h:mm a')}
                               </div>
                             ) : (
-                              <span className="text-gray-500">Still in gym</span>
+                              <span className="text-gray-500 flex items-center gap-2">
+                                <div className="h-2 w-2 bg-green-400 rounded-full animate-pulse"></div>
+                                Still in gym
+                              </span>
                             )}
                           </TableCell>
                           <TableCell>
                             {duration !== null ? (
                               <div className="flex items-center gap-2">
-                                <Clock className="h-4 w-4 text-gray-600" />
+                                <Clock className="h-4 w-4 text-primary/60" />
                                 {duration < 60 
                                   ? `${duration} min` 
                                   : `${Math.floor(duration / 60)}h ${duration % 60}m`}
                               </div>
                             ) : (
-                              <ArrowLeftRight className="h-4 w-4 text-gray-400" />
+                              <ArrowLeftRight className="h-4 w-4 text-primary/40" />
                             )}
                           </TableCell>
                           <TableCell>
@@ -214,6 +218,7 @@ export default function Attendance() {
                                 variant="outline" 
                                 size="sm"
                                 onClick={() => handleCheckOut(record.id)}
+                                className="button-hover bg-primary/5 border-primary/20 text-primary hover:bg-primary/10"
                               >
                                 <LogOut className="mr-2 h-4 w-4" />
                                 Check Out
