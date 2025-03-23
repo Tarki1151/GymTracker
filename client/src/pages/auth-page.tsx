@@ -140,10 +140,10 @@ export default function AuthPage() {
                     {loginMutation.isPending ? (
                       <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Logging in...
+                        {t('common.loading')}
                       </>
                     ) : (
-                      "Sign in"
+                      t('auth.login')
                     )}
                   </Button>
                 </form>
@@ -200,9 +200,9 @@ export default function AuthPage() {
                     name="password"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Password</FormLabel>
+                        <FormLabel>{t('auth.password')}</FormLabel>
                         <FormControl>
-                          <Input type="password" placeholder="Create a password" {...field} />
+                          <Input type="password" placeholder={t('auth.password')} {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -214,9 +214,9 @@ export default function AuthPage() {
                     name="confirmPassword"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Confirm Password</FormLabel>
+                        <FormLabel>{t('auth.confirmPassword')}</FormLabel>
                         <FormControl>
-                          <Input type="password" placeholder="Confirm your password" {...field} />
+                          <Input type="password" placeholder={t('auth.confirmPassword')} {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -231,10 +231,10 @@ export default function AuthPage() {
                     {registerMutation.isPending ? (
                       <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Creating account...
+                        {t('common.loading')}
                       </>
                     ) : (
-                      "Create Account"
+                      t('auth.createAccount')
                     )}
                   </Button>
                 </form>
@@ -248,9 +248,9 @@ export default function AuthPage() {
       <div className="hidden lg:block relative w-0 flex-1 bg-gradient-to-br from-blue-600 to-blue-800">
         <div className="flex flex-col justify-center items-center h-full text-white px-8">
           <div className="max-w-lg text-center">
-            <h1 className="text-4xl font-bold mb-6">Welcome to Gymify</h1>
+            <h1 className="text-4xl font-bold mb-6">{t('auth.welcome')}</h1>
             <p className="text-xl mb-8">
-              The comprehensive gym management system for modern fitness facilities
+              {t('auth.welcomeDescription')}
             </p>
             <div className="grid grid-cols-2 gap-6 text-left">
               <div className="flex items-start">
@@ -258,8 +258,8 @@ export default function AuthPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 <div>
-                  <h3 className="font-semibold text-lg">Member Management</h3>
-                  <p className="text-blue-200 text-sm">Track all member details and profiles</p>
+                  <h3 className="font-semibold text-lg">{t('auth.featureMemberManagement')}</h3>
+                  <p className="text-blue-200 text-sm">{t('auth.featureMemberManagementDesc')}</p>
                 </div>
               </div>
               <div className="flex items-start">
@@ -267,8 +267,8 @@ export default function AuthPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 <div>
-                  <h3 className="font-semibold text-lg">Membership Plans</h3>
-                  <p className="text-blue-200 text-sm">Create and manage subscription plans</p>
+                  <h3 className="font-semibold text-lg">{t('auth.featureMembershipPlans')}</h3>
+                  <p className="text-blue-200 text-sm">{t('auth.featureMembershipPlansDesc')}</p>
                 </div>
               </div>
               <div className="flex items-start">
@@ -276,8 +276,8 @@ export default function AuthPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 <div>
-                  <h3 className="font-semibold text-lg">Attendance Tracking</h3>
-                  <p className="text-blue-200 text-sm">Monitor check-ins and facility usage</p>
+                  <h3 className="font-semibold text-lg">{t('auth.featureAttendance')}</h3>
+                  <p className="text-blue-200 text-sm">{t('auth.featureAttendanceDesc')}</p>
                 </div>
               </div>
               <div className="flex items-start">
