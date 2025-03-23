@@ -11,6 +11,25 @@
     @apply font-sans antialiased text-foreground;
     background-color: #e5e7eb; /* Daha belirgin açık gri arka plan - gray-200 */
     min-height: 100vh;
+    background-image: url('/tarabya-logo.png');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 40%;
+    background-attachment: fixed;
+    background-blend-mode: overlay;
+    background-opacity: 0.05;
+    position: relative;
+  }
+  
+  body::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.95);
+    z-index: -1;
   }
   
   h1, h2, h3, h4, h5, h6 {

@@ -74,8 +74,15 @@ export default function Header({ onOpenSidebar }: HeaderProps) {
           <Menu className="w-6 h-6" />
         </button>
         
-        {/* Uygulama adı */}
-        <h1 className="hidden lg:block text-xl font-semibold text-primary mr-6">{appName}</h1>
+        {/* Logo ve uygulama adı */}
+        <div className="flex items-center">
+          <img 
+            src="/tarabya-logo.png" 
+            alt="TARABYA MARTE Fight Academy" 
+            className="h-10 mr-3"
+          />
+          <h1 className="hidden lg:block text-xl font-semibold text-primary mr-6">{appName}</h1>
+        </div>
 
         <div className="relative mx-4 lg:mx-0">
           <span className="absolute inset-y-0 left-0 flex items-center pl-3">
