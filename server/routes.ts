@@ -242,7 +242,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const id = parseInt(req.params.id);
       const attendanceData = z.object({
-        checkOutTime: z.date().optional(),
+        checkOutTime: z.string().optional(),
       }).parse(req.body);
       const updatedAttendance = await storage.updateAttendance(id, attendanceData);
       if (!updatedAttendance) {

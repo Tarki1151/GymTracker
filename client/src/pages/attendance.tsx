@@ -251,7 +251,11 @@ export default function Attendance() {
         isOpen={showCheckInModal} 
         onClose={() => setShowCheckInModal(false)} 
         onSubmit={handleCheckIn}
-        members={members || []}
+        members={members?.map(m => ({
+          id: m.id,
+          fullName: m.fullName,
+          active: m.active === null ? true : !!m.active
+        })) || []}
       />
     </MainLayout>
   );

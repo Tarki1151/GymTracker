@@ -366,15 +366,24 @@ export class MemStorage implements IStorage {
     return newAttendance;
   }
   
-  async updateAttendance(id: number, attendanceUpdate: Partial<Attendance>): Promise<Attendance | undefined> {
+  async updateAttendance(id: number, attendanceUpdate: Partial<Attendance> | { checkOutTime: string }): Promise<Attendance | undefined> {
     const existingAttendance = this.attendanceData.get(id);
     if (!existingAttendance) return undefined;
     
-    const updatedAttendance = { ...existingAttendance, ...attendanceUpdate };
+    // Handle the string to Date conversion for checkOutTime
+    let finalUpdate: Partial<Attendance> = { ...attendanceUpdate };
+    if ('checkOutTime' in attendanceUpdate && typeof attendanceUpdate.checkOutTime === 'string') {
+      finalUpdate = {
+        ...attendanceUpdate,
+        checkOutTime: new Date(attendanceUpdate.checkOutTime)
+      };
+    }
+    
+    const updatedAttendance = { ...existingAttendance, ...finalUpdate };
     this.attendanceData.set(id, updatedAttendance);
     
     // Log check-out if that's what's being updated
-    if (attendanceUpdate.checkOutTime && !existingAttendance.checkOutTime) {
+    if (finalUpdate.checkOutTime && !existingAttendance.checkOutTime) {
       const member = await this.getMember(existingAttendance.memberId);
       this.createActivityLog({
         action: "check_out",
