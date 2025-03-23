@@ -18,11 +18,16 @@ import { Member, InsertMember } from "@shared/schema";
 import AddMemberForm from "@/components/modals/add-member-form";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
-import { Search, Plus, UserRound } from "lucide-react";
+import { Search, Plus, UserRound, Edit, Eye } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { useLocation } from "wouter";
 
 export default function Members() {
   const [searchTerm, setSearchTerm] = useState("");
   const [showAddMemberModal, setShowAddMemberModal] = useState(false);
+  const [selectedMember, setSelectedMember] = useState<Member | null>(null);
+  const [showViewMemberModal, setShowViewMemberModal] = useState(false);
+  const [, setLocation] = useLocation();
   const { toast } = useToast();
 
   const { data: members, isLoading } = useQuery<Member[]>({
@@ -165,8 +170,29 @@ export default function Members() {
                         </TableCell>
                         <TableCell>
                           <div className="flex items-center gap-2">
-                            <Button variant="outline" size="sm">View</Button>
-                            <Button variant="outline" size="sm">Edit</Button>
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              onClick={() => {
+                                setSelectedMember(member);
+                                setShowViewMemberModal(true);
+                              }}
+                            >
+                              <Eye className="h-4 w-4 mr-1" /> View
+                            </Button>
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              onClick={() => {
+                                // Navigate to edit page or open edit modal
+                                toast({
+                                  title: "Edit functionality",
+                                  description: "Edit functionality will be implemented in the next update.",
+                                });
+                              }}
+                            >
+                              <Edit className="h-4 w-4 mr-1" /> Edit
+                            </Button>
                           </div>
                         </TableCell>
                       </TableRow>
@@ -200,6 +226,100 @@ export default function Members() {
         onClose={() => setShowAddMemberModal(false)} 
         onSubmit={handleAddMember}
       />
+
+      {/* View Member Modal */}
+      <Dialog open={showViewMemberModal} onOpenChange={setShowViewMemberModal}>
+        <DialogContent className="max-w-3xl">
+          <DialogHeader>
+            <DialogTitle>Member Details</DialogTitle>
+          </DialogHeader>
+          {selectedMember && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 py-4">
+              <div>
+                <div className="w-20 h-20 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <UserRound className="h-8 w-8 text-primary-600" />
+                </div>
+                <h3 className="text-lg font-medium text-center mb-4">{selectedMember.fullName}</h3>
+                
+                <div className="space-y-3">
+                  <div className="flex justify-between border-b pb-2">
+                    <span className="font-medium">Status:</span>
+                    <Badge variant={selectedMember.active ? "success" : "secondary"}>
+                      {selectedMember.active ? "Active" : "Inactive"}
+                    </Badge>
+                  </div>
+                  
+                  <div className="flex justify-between border-b pb-2">
+                    <span className="font-medium">Email:</span>
+                    <span>{selectedMember.email}</span>
+                  </div>
+                  
+                  <div className="flex justify-between border-b pb-2">
+                    <span className="font-medium">Phone:</span>
+                    <span>{selectedMember.phone || "N/A"}</span>
+                  </div>
+                  
+                  <div className="flex justify-between border-b pb-2">
+                    <span className="font-medium">Date of Birth:</span>
+                    <span>
+                      {selectedMember.dateOfBirth 
+                        ? new Date(selectedMember.dateOfBirth).toLocaleDateString() 
+                        : "N/A"}
+                    </span>
+                  </div>
+                  
+                  <div className="flex justify-between border-b pb-2">
+                    <span className="font-medium">Gender:</span>
+                    <span>{selectedMember.gender || "N/A"}</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="space-y-3">
+                <div className="flex justify-between border-b pb-2">
+                  <span className="font-medium">Address:</span>
+                  <span className="text-right">{selectedMember.address || "N/A"}</span>
+                </div>
+                
+                <div className="flex justify-between border-b pb-2">
+                  <span className="font-medium">Emergency Contact:</span>
+                  <span>{selectedMember.emergencyContact || "N/A"}</span>
+                </div>
+                
+                <div className="flex justify-between border-b pb-2">
+                  <span className="font-medium">Emergency Phone:</span>
+                  <span>{selectedMember.emergencyPhone || "N/A"}</span>
+                </div>
+                
+                <div className="flex justify-between border-b pb-2">
+                  <span className="font-medium">Member Since:</span>
+                  <span>
+                    {selectedMember.createdAt
+                      ? new Date(selectedMember.createdAt).toLocaleDateString()
+                      : "N/A"}
+                  </span>
+                </div>
+                
+                <div className="mt-4">
+                  <span className="font-medium">Notes:</span>
+                  <p className="mt-2 p-3 bg-gray-50 rounded-md min-h-[80px]">
+                    {selectedMember.notes || "No notes available."}
+                  </p>
+                </div>
+              </div>
+              
+              <div className="col-span-1 md:col-span-2 flex justify-end gap-3 mt-4">
+                <Button 
+                  variant="outline" 
+                  onClick={() => setShowViewMemberModal(false)}
+                >
+                  Close
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </MainLayout>
   );
 }
