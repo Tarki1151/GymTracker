@@ -245,7 +245,7 @@ export default function AuthPage() {
       </div>
 
       {/* Right side - Hero */}
-      <div className="hidden lg:block relative w-0 flex-1 bg-gradient-to-br from-blue-600 to-blue-800">
+      <div className="hidden lg:block relative w-0 flex-1 bg-gradient-to-br from-blue-400 to-blue-600">
         <div className="flex flex-col justify-center items-center h-full text-white px-8">
           <div className="max-w-lg text-center">
             <h1 className="text-4xl font-bold mb-6">{t('auth.welcome')}</h1>
