@@ -85,25 +85,9 @@
     "allPlans": "Tüm Planlar",
     "addPlan": "Plan Ekle",
     "editPlan": "Plan Düzenle",
-    "planDetails": "Plan Detayları",
-    "planName": "Plan Adı", // Added placeholder
-    "planDescription": "Plan Açıklaması", // Added placeholder
-    "planPrice": "Plan Fiyatı", // Added placeholder
-    "planDuration": "Plan Süresi", // Added placeholder
+    "planDetails": "Plan Detayları"
   },
   "reports": {
-    "title": "Raporlar",
-    "membershipReport": "Üyelik Raporu",
-    "attendanceReport": "Yoklama Raporu",
-    "revenueReport": "Gelir Raporu",
-    "equipmentReport": "Ekipman Raporu",
-    "generateReport": "Rapor Oluştur",
-    "dateRange": "Tarih Aralığı",
-    "startDate": "Başlangıç Tarihi",
-    "endDate": "Bitiş Tarihi",
-    "filter": "Filtrele",
-    "export": "Dışa Aktar",
-    "print": "Yazdır",
     "last7Days": "Son 7 Gün",
     "last30Days": "Son 30 Gün",
     "last3Months": "Son 3 Ay",
@@ -141,10 +125,7 @@
     "bankTransfer": "Banka Havalesi",
     "other": "Diğer",
     "notes": "Notlar",
-    "actions": "İşlemler",
-    "paymentStatus": "Ödeme Durumu", // Added placeholder
-    "paymentType": "Ödeme Tipi" // Added placeholder
-
+    "actions": "İşlemler"
   },
   "attendance": {
     "title": "Yoklama",
@@ -178,6 +159,25 @@
     "purchasePrice": "Satın Alma Fiyatı",
     "maintenanceDate": "Son Bakım Tarihi",
     "actions": "İşlemler"
+  },
+  "reports": {
+    "title": "Raporlar",
+    "membershipReport": "Üyelik Raporu",
+    "attendanceReport": "Yoklama Raporu",
+    "revenueReport": "Gelir Raporu",
+    "equipmentReport": "Ekipman Raporu",
+    "generateReport": "Rapor Oluştur",
+    "dateRange": "Tarih Aralığı",
+    "startDate": "Başlangıç Tarihi",
+    "endDate": "Bitiş Tarihi",
+    "filter": "Filtrele",
+    "export": "Dışa Aktar",
+    "print": "Yazdır",
+    "last7Days": "Son 7 Gün",
+    "last30Days": "Son 30 Gün",
+    "last3Months": "Son 3 Ay",
+    "last12Months": "Son 12 Ay",
+    "membershipStatistics": "Üyelik İstatistikleri"
   },
   "settings": {
     "title": "Ayarlar",

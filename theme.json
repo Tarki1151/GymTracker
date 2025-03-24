@@ -1,16 +1,6 @@
-
 {
-  "name": "replit-dark",
-  "author": "replit",
-  "theme": {
-    "colors": {
-      "primary": "#0099FF",
-      "primaryDark": "#0072BD",
-      "primaryDarker": "#004D80",
-      "primaryDarkest": "#002640",
-      "primaryLight": "#33ADFF",
-      "primaryLighter": "#66C2FF",
-      "primaryLightest": "#99D6FF"
-    }
-  }
+  "variant": "tint",
+  "primary": "hsl(210, 70%, 65%)",
+  "appearance": "light",
+  "radius": 0.75
 }
