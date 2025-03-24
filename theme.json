@@ -4,15 +4,13 @@
   "author": "replit",
   "theme": {
     "colors": {
-      "primary": {
-        "default": "#0099FF",
-        "dark": "#0072BD",
-        "darker": "#004D80",
-        "darkest": "#002640",
-        "light": "#33ADFF",
-        "lighter": "#66C2FF",
-        "lightest": "#99D6FF"
-      }
+      "primary": "#0099FF",
+      "primaryDark": "#0072BD",
+      "primaryDarker": "#004D80",
+      "primaryDarkest": "#002640",
+      "primaryLight": "#33ADFF",
+      "primaryLighter": "#66C2FF",
+      "primaryLightest": "#99D6FF"
     }
   }
 }
