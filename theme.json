@@ -1,6 +1,18 @@
+
 {
-  "variant": "tint",
-  "primary": "hsl(210, 70%, 65%)",
-  "appearance": "light",
-  "radius": 0.75
+  "name": "replit-dark",
+  "author": "replit",
+  "theme": {
+    "colors": {
+      "primary": {
+        "default": "#0099FF",
+        "dark": "#0072BD",
+        "darker": "#004D80",
+        "darkest": "#002640",
+        "light": "#33ADFF",
+        "lighter": "#66C2FF",
+        "lightest": "#99D6FF"
+      }
+    }
+  }
 }
