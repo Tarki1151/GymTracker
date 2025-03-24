@@ -14,7 +14,8 @@
     "next": "Weiter",
     "submit": "Absenden",
     "loading": "Laden...",
-    "adminModeMessage": "Sie haben vollen Zugriff auf alle Funktionen"
+    "adminModeMessage": "Sie haben vollen Zugriff auf alle Funktionen",
+    "viewAll": "Alle anzeigen"
   },
   "auth": {
     "login": "Anmelden",
@@ -166,6 +167,7 @@
   "reports": {
     "title": "Berichte",
     "membershipReport": "Mitgliedschaftsbericht",
+    "membershipStatistics": "Mitgliedschaftsstatistiken",
     "attendanceReport": "Anwesenheitsbericht",
     "revenueReport": "Umsatzbericht",
     "equipmentReport": "Ausrüstungsbericht",
@@ -175,7 +177,11 @@
     "endDate": "Enddatum",
     "filter": "Filtern",
     "export": "Exportieren",
-    "print": "Drucken"
+    "print": "Drucken",
+    "last7Days": "Letzte 7 Tage",
+    "last30Days": "Letzte 30 Tage",
+    "last3Months": "Letzte 3 Monate",
+    "last12Months": "Letzte 12 Monate"
   },
   "settings": {
     "title": "Einstellungen",
