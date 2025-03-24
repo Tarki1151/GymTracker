@@ -14,7 +14,8 @@
     "next": "İleri",
     "submit": "Gönder",
     "loading": "Yükleniyor...",
-    "adminModeMessage": "Tüm özelliklere erişiminiz var"
+    "adminModeMessage": "Tüm özelliklere erişiminiz var",
+    "viewAll": "Tümünü Görüntüle"
   },
   "auth": {
     "login": "Giriş Yap",
@@ -38,7 +39,7 @@
     "featureAttendance": "Yoklama Takibi",
     "featureAttendanceDesc": "Giriş-çıkışları ve tesis kullanımını izleyin",
     "featureReporting": "Raporlama ve Analiz",
-    "featureReportingDesc": "Kapsamlı raporlarla önemli bilgiler edinin"
+    "featureReportingDesc": "Kapsamlı raporlarla iç görü kazanın"
   },
   "dashboard": {
     "title": "Gösterge Paneli",
@@ -50,7 +51,7 @@
     "expiringMemberships": "Süresi Dolan Üyelikler",
     "recentActivity": "Son Aktiviteler",
     "quickActions": "Hızlı İşlemler",
-    "checkIn": "Giriş",
+    "checkIn": "Giriş Yap",
     "addMember": "Üye Ekle",
     "addPayment": "Ödeme Ekle",
     "reports": "Raporlar"
@@ -59,9 +60,9 @@
     "title": "Üyeler",
     "allMembers": "Tüm Üyeler",
     "addMember": "Üye Ekle",
-    "editMember": "Üyeyi Düzenle",
+    "editMember": "Üye Düzenle",
     "memberDetails": "Üye Detayları",
-    "name": "Ad",
+    "name": "İsim",
     "email": "E-posta",
     "phone": "Telefon",
     "address": "Adres",
@@ -83,19 +84,15 @@
     "title": "Üyelik Planları",
     "allPlans": "Tüm Planlar",
     "addPlan": "Plan Ekle",
-    "editPlan": "Planı Düzenle",
-    "planDetails": "Plan Detayları",
-    "name": "Ad",
-    "duration": "Süre",
-    "price": "Fiyat",
-    "description": "Açıklama",
-    "status": "Durum",
-    "months": "ay",
-    "days": "gün",
-    "weeks": "hafta",
-    "active": "Aktif",
-    "inactive": "Pasif",
-    "actions": "İşlemler"
+    "editPlan": "Plan Düzenle",
+    "planDetails": "Plan Detayları"
+  },
+  "reports": {
+    "last7Days": "Son 7 Gün",
+    "last30Days": "Son 30 Gün",
+    "last3Months": "Son 3 Ay",
+    "last12Months": "Son 12 Ay",
+    "membershipStatistics": "Üyelik İstatistikleri"
   },
   "subscriptions": {
     "title": "Abonelikler",
@@ -175,7 +172,12 @@
     "endDate": "Bitiş Tarihi",
     "filter": "Filtrele",
     "export": "Dışa Aktar",
-    "print": "Yazdır"
+    "print": "Yazdır",
+    "last7Days": "Son 7 Gün",
+    "last30Days": "Son 30 Gün",
+    "last3Months": "Son 3 Ay",
+    "last12Months": "Son 12 Ay",
+    "membershipStatistics": "Üyelik İstatistikleri"
   },
   "settings": {
     "title": "Ayarlar",

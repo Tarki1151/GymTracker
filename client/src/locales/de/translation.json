@@ -14,7 +14,8 @@
     "next": "Weiter",
     "submit": "Absenden",
     "loading": "Laden...",
-    "adminModeMessage": "Sie haben vollen Zugriff auf alle Funktionen"
+    "adminModeMessage": "Sie haben vollen Zugriff auf alle Funktionen",
+    "viewAll": "Alle anzeigen"
   },
   "auth": {
     "login": "Anmelden",
@@ -29,16 +30,16 @@
     "createAccount": "Konto erstellen",
     "alreadyHaveAccount": "Haben Sie bereits ein Konto?",
     "loginHere": "Hier anmelden",
-    "welcome": "Willkommen bei TARABYA MARTE Fight Academy",
-    "welcomeDescription": "Das umfassende Fitnessstudio-Verwaltungssystem für moderne Sporteinrichtungen",
+    "welcome": "TARABYA MARTE Fight Academy",
+    "welcomeDescription": "Das umfassende Verwaltungssystem für moderne Sporteinrichtungen",
     "featureMemberManagement": "Mitgliederverwaltung",
     "featureMemberManagementDesc": "Verfolgen Sie alle Mitgliedsdetails und Profile",
     "featureMembershipPlans": "Mitgliedschaftspläne",
     "featureMembershipPlansDesc": "Erstellen und verwalten Sie Abonnementpläne",
     "featureAttendance": "Anwesenheitsverfolgung",
-    "featureAttendanceDesc": "Überwachen Sie Ein- und Auscheckvorgänge und Anlagennutzung",
+    "featureAttendanceDesc": "Überwachen Sie Ein- und Ausgänge und Einrichtungsnutzung",
     "featureReporting": "Berichte und Analysen",
-    "featureReportingDesc": "Gewinnen Sie Einblicke mit umfassenden Berichten"
+    "featureReportingDesc": "Gewinnen Sie Einblicke durch umfassende Berichte"
   },
   "dashboard": {
     "title": "Dashboard",
@@ -84,18 +85,14 @@
     "allPlans": "Alle Pläne",
     "addPlan": "Plan hinzufügen",
     "editPlan": "Plan bearbeiten",
-    "planDetails": "Plandetails",
-    "name": "Name",
-    "duration": "Dauer",
-    "price": "Preis",
-    "description": "Beschreibung",
-    "status": "Status",
-    "months": "Monate",
-    "days": "Tage",
-    "weeks": "Wochen",
-    "active": "Aktiv",
-    "inactive": "Inaktiv",
-    "actions": "Aktionen"
+    "planDetails": "Plandetails"
+  },
+  "reports": {
+    "last7Days": "Letzte 7 Tage",
+    "last30Days": "Letzte 30 Tage",
+    "last3Months": "Letzte 3 Monate",
+    "last12Months": "Letzte 12 Monate",
+    "membershipStatistics": "Mitgliedschaftsstatistiken"
   },
   "subscriptions": {
     "title": "Abonnements",
@@ -175,7 +172,13 @@
     "endDate": "Enddatum",
     "filter": "Filtern",
     "export": "Exportieren",
-    "print": "Drucken"
+    "print": "Drucken",
+    "last7Days": "Letzte 7 Tage",
+    "last30Days": "Letzte 30 Tage",
+    "last3Months": "Letzte 3 Monate",
+    "last12Months": "Letzte 12 Monate",
+    "membershipStatistics": "Mitgliedschaftsstatistiken"
+
   },
   "settings": {
     "title": "Einstellungen",
