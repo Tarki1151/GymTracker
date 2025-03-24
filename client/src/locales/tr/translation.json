@@ -14,8 +14,7 @@
     "next": "İleri",
     "submit": "Gönder",
     "loading": "Yükleniyor...",
-    "adminModeMessage": "Tüm özelliklere erişiminiz var",
-    "viewAll": "Tümünü Gör"
+    "adminModeMessage": "Tüm özelliklere erişiminiz var"
   },
   "auth": {
     "login": "Giriş Yap",
