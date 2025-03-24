@@ -51,9 +51,9 @@ export default function Settings() {
   const { toast } = useToast();
   
   // Ayar değerleri için state
-  const [appName, setAppName] = useState("Gymify");
+  const [appName, setAppName] = useState("TarabyaMarte");
   const [businessHours, setBusinessHours] = useState("6:00 AM - 10:00 PM");
-  const [contactEmail, setContactEmail] = useState("contact@gymify.com");
+  const [contactEmail, setContactEmail] = useState("contact@tarabyamarte.com");
   const [maintenanceMode, setMaintenanceMode] = useState("false");
   
   // Ayarları getirmek için query

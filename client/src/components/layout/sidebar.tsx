@@ -54,7 +54,7 @@ export default function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
       >
         <div className="flex items-center justify-center mt-6">
           <div className="flex items-center">
-            <span className="text-2xl font-bold text-primary">Gymify</span>
+            <span className="text-2xl font-bold text-primary">TarabyaMarte</span>
           </div>
         </div>
 
@@ -96,7 +96,7 @@ export default function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
 
         <div className="absolute bottom-0 w-full p-4 border-t">
           <div className="text-xs text-gray-500 text-center">
-            Gymify v1.0.0
+            TarabyaMarte v1.0.0
           </div>
         </div>
       </div>

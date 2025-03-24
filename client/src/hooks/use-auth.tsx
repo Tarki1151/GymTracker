@@ -61,7 +61,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       queryClient.setQueryData(["/api/user"], user);
       toast({
         title: "Registration successful",
-        description: `Welcome to Gymify, ${user.fullName}!`,
+        description: `Welcome to TarabyaMarte, ${user.fullName}!`,
       });
     },
     onError: (error: Error) => {

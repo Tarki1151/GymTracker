@@ -19,7 +19,7 @@ export default function WelcomeCard() {
   });
 
   // Spor salonu adını ayarlardan getir
-  const gymName = settings?.find(s => s.key === 'appName')?.value || 'Gymify';
+  const gymName = settings?.find(s => s.key === 'appName')?.value || 'TarabyaMarte';
 
   // Günün saatine göre selamlama mesajı
   const getGreeting = () => {

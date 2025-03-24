@@ -1055,6 +1055,6 @@ export const storage = new DatabaseStorage();
   // Uygulama adı ayarını ekle (eğer yoksa)
   const appNameSetting = await storage.getSetting('appName');
   if (!appNameSetting) {
-    await storage.createSetting({ key: 'appName', value: 'Gymify' });
+    await storage.createSetting({ key: 'appName', value: 'TarabyaMarte' });
   }
 })();

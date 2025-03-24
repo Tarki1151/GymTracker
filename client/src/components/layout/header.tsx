@@ -34,7 +34,7 @@ export default function Header({ onOpenSidebar }: HeaderProps) {
   const { t } = useTranslation();
   
   // Varsayılan uygulama adı
-  const [appName, setAppName] = useState("Gymify");
+  const [appName, setAppName] = useState("TarabyaMarte");
   
   // Ayarlardan uygulama adını al
   const { data: settings } = useQuery<Setting[]>({ 
