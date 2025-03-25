@@ -15,7 +15,11 @@
     "submit": "Gönder",
     "loading": "Yükleniyor...",
     "adminModeMessage": "Tüm özelliklere erişiminiz var",
-    "viewAll": "Tümünü Görüntüle"
+    "viewAll": "Tümünü Görüntüle",
+    "close": "Kapat",
+    "notAvailable": "Mevcut Değil",
+    "comingSoon": "Çok Yakında",
+    "comingSoonDesc": "Bu özellik bir sonraki güncellemede kullanıma sunulacaktır."
   },
   "auth": {
     "login": "Giriş Yap",
@@ -78,7 +82,22 @@
     "emergencyPhone": "Acil Durum Telefonu",
     "notes": "Notlar",
     "joinDate": "Katılım Tarihi",
-    "actions": "İşlemler"
+    "actions": "İşlemler",
+    "statusUpdated": "Üye durumu güncellendi",
+    "statusUpdatedDesc": "Üyenin aktif durumu başarıyla güncellendi",
+    "updateFailed": "Güncelleme başarısız",
+    "updateFailedDesc": "Üye durumu güncellenirken bir hata oluştu. Lütfen tekrar deneyin.",
+    "addedSuccessfully": "Üye başarıyla eklendi",
+    "addedToSystem": "sisteme başarıyla eklendi",
+    "addFailed": "Üye ekleme başarısız",
+    "addFailedDesc": "Üye eklenirken bir hata oluştu. Lütfen tekrar deneyin.",
+    "manageMembers": "Spor salonu üyelerinizi ve bilgilerini yönetin.",
+    "searchPlaceholder": "İsim, e-posta veya telefon ile üye arayın...",
+    "contactInfo": "İletişim Bilgileri",
+    "noMembersFound": "Üye bulunamadı",
+    "noMembersMatchSearch": "Arama kriterlerinize uygun üye bulunamadı.",
+    "getStartedByAdding": "Yeni bir üye ekleyerek başlayın.",
+    "noNotes": "Not bulunmuyor."
   },
   "memberships": {
     "title": "Üyelik Planları",

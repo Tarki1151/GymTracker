@@ -21,8 +21,10 @@ import { useToast } from "@/hooks/use-toast";
 import { Search, Plus, UserRound, Edit, Eye } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useLocation } from "wouter";
+import { useTranslation } from "react-i18next";
 
 export default function Members() {
+  const { t } = useTranslation();
   const [searchTerm, setSearchTerm] = useState("");
   const [showAddMemberModal, setShowAddMemberModal] = useState(false);
   const [selectedMember, setSelectedMember] = useState<Member | null>(null);
@@ -41,14 +43,14 @@ export default function Members() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/members"] });
       toast({
-        title: "Member status updated",
-        description: "The member's active status has been updated successfully",
+        title: t('members.statusUpdated'),
+        description: t('members.statusUpdatedDesc'),
       });
     },
     onError: () => {
       toast({
-        title: "Update failed",
-        description: "Failed to update member status. Please try again.",
+        title: t('members.updateFailed'),
+        description: t('members.updateFailedDesc'),
         variant: "destructive",
       });
     }
@@ -66,13 +68,13 @@ export default function Members() {
       queryClient.invalidateQueries({ queryKey: ["/api/members"] });
       setShowAddMemberModal(false);
       toast({
-        title: "Member added successfully",
-        description: `${memberData.fullName} has been added to the system.`,
+        title: t('members.addedSuccessfully'),
+        description: `${memberData.fullName} ${t('members.addedToSystem')}`,
       });
     } catch (error) {
       toast({
-        title: "Failed to add member",
-        description: "There was an error adding the member. Please try again.",
+        title: t('members.addFailed'),
+        description: t('members.addFailedDesc'),
         variant: "destructive",
       });
     }
@@ -84,14 +86,14 @@ export default function Members() {
         {/* Page header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
           <div>
-            <h1 className="text-2xl font-semibold text-gray-900">Members</h1>
+            <h1 className="text-2xl font-semibold text-gray-900">{t('members.title')}</h1>
             <p className="mt-1 text-sm text-gray-500">
-              Manage your gym members and their information.
+              {t('members.manageMembers')}
             </p>
           </div>
           <Button className="mt-4 sm:mt-0" onClick={() => setShowAddMemberModal(true)}>
             <Plus className="mr-2 h-4 w-4" />
-            Add Member
+            {t('members.addMember')}
           </Button>
         </div>
 
@@ -100,7 +102,7 @@ export default function Members() {
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
             <Input
-              placeholder="Search members by name, email or phone..."
+              placeholder={t('members.searchPlaceholder')}
               className="pl-9"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -124,12 +126,12 @@ export default function Members() {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Name</TableHead>
-                      <TableHead>Contact Information</TableHead>
-                      <TableHead className="hidden md:table-cell">Date of Birth</TableHead>
-                      <TableHead className="hidden lg:table-cell">Address</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Actions</TableHead>
+                      <TableHead>{t('members.name')}</TableHead>
+                      <TableHead>{t('members.contactInfo')}</TableHead>
+                      <TableHead className="hidden md:table-cell">{t('members.dateOfBirth')}</TableHead>
+                      <TableHead className="hidden lg:table-cell">{t('members.address')}</TableHead>
+                      <TableHead>{t('members.status')}</TableHead>
+                      <TableHead>{t('members.actions')}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -150,10 +152,10 @@ export default function Members() {
                           </div>
                         </TableCell>
                         <TableCell className="hidden md:table-cell">
-                          {member.dateOfBirth ? new Date(member.dateOfBirth).toLocaleDateString() : "N/A"}
+                          {member.dateOfBirth ? new Date(member.dateOfBirth).toLocaleDateString() : t('common.notAvailable')}
                         </TableCell>
                         <TableCell className="hidden lg:table-cell">
-                          {member.address || "N/A"}
+                          {member.address || t('common.notAvailable')}
                         </TableCell>
                         <TableCell>
                           <div className="flex items-center gap-2">
@@ -164,7 +166,7 @@ export default function Members() {
                               }
                             />
                             <Badge variant={member.active ? "success" : "secondary"}>
-                              {member.active ? "Active" : "Inactive"}
+                              {member.active ? t('members.active') : t('members.inactive')}
                             </Badge>
                           </div>
                         </TableCell>
@@ -178,7 +180,7 @@ export default function Members() {
                                 setShowViewMemberModal(true);
                               }}
                             >
-                              <Eye className="h-4 w-4 mr-1" /> View
+                              <Eye className="h-4 w-4 mr-1" /> {t('common.view')}
                             </Button>
                             <Button 
                               variant="outline" 
@@ -186,12 +188,12 @@ export default function Members() {
                               onClick={() => {
                                 // Navigate to edit page or open edit modal
                                 toast({
-                                  title: "Edit functionality",
-                                  description: "Edit functionality will be implemented in the next update.",
+                                  title: t('common.comingSoon'),
+                                  description: t('common.comingSoonDesc'),
                                 });
                               }}
                             >
-                              <Edit className="h-4 w-4 mr-1" /> Edit
+                              <Edit className="h-4 w-4 mr-1" /> {t('common.edit')}
                             </Button>
                           </div>
                         </TableCell>
@@ -203,16 +205,16 @@ export default function Members() {
             ) : (
               <div className="p-8 text-center">
                 <UserRound className="mx-auto h-12 w-12 text-gray-400" />
-                <h3 className="mt-2 text-sm font-medium text-gray-900">No members found</h3>
+                <h3 className="mt-2 text-sm font-medium text-gray-900">{t('members.noMembersFound')}</h3>
                 <p className="mt-1 text-sm text-gray-500">
                   {searchTerm ? 
-                    "No members match your search criteria." : 
-                    "Get started by adding a new member."}
+                    t('members.noMembersMatchSearch') : 
+                    t('members.getStartedByAdding')}
                 </p>
                 <div className="mt-6">
                   <Button onClick={() => setShowAddMemberModal(true)}>
                     <Plus className="mr-2 h-4 w-4" />
-                    Add Member
+                    {t('members.addMember')}
                   </Button>
                 </div>
               </div>
@@ -231,7 +233,7 @@ export default function Members() {
       <Dialog open={showViewMemberModal} onOpenChange={setShowViewMemberModal}>
         <DialogContent className="max-w-3xl">
           <DialogHeader>
-            <DialogTitle>Member Details</DialogTitle>
+            <DialogTitle>{t('members.memberDetails')}</DialogTitle>
           </DialogHeader>
           {selectedMember && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 py-4">
@@ -243,67 +245,67 @@ export default function Members() {
                 
                 <div className="space-y-3">
                   <div className="flex justify-between border-b pb-2">
-                    <span className="font-medium">Status:</span>
+                    <span className="font-medium">{t('members.status')}:</span>
                     <Badge variant={selectedMember.active ? "success" : "secondary"}>
-                      {selectedMember.active ? "Active" : "Inactive"}
+                      {selectedMember.active ? t('members.active') : t('members.inactive')}
                     </Badge>
                   </div>
                   
                   <div className="flex justify-between border-b pb-2">
-                    <span className="font-medium">Email:</span>
+                    <span className="font-medium">{t('members.email')}:</span>
                     <span>{selectedMember.email}</span>
                   </div>
                   
                   <div className="flex justify-between border-b pb-2">
-                    <span className="font-medium">Phone:</span>
-                    <span>{selectedMember.phone || "N/A"}</span>
+                    <span className="font-medium">{t('members.phone')}:</span>
+                    <span>{selectedMember.phone || t('common.notAvailable')}</span>
                   </div>
                   
                   <div className="flex justify-between border-b pb-2">
-                    <span className="font-medium">Date of Birth:</span>
+                    <span className="font-medium">{t('members.dateOfBirth')}:</span>
                     <span>
                       {selectedMember.dateOfBirth 
                         ? new Date(selectedMember.dateOfBirth).toLocaleDateString() 
-                        : "N/A"}
+                        : t('common.notAvailable')}
                     </span>
                   </div>
                   
                   <div className="flex justify-between border-b pb-2">
-                    <span className="font-medium">Gender:</span>
-                    <span>{selectedMember.gender || "N/A"}</span>
+                    <span className="font-medium">{t('members.gender')}:</span>
+                    <span>{selectedMember.gender || t('common.notAvailable')}</span>
                   </div>
                 </div>
               </div>
               
               <div className="space-y-3">
                 <div className="flex justify-between border-b pb-2">
-                  <span className="font-medium">Address:</span>
-                  <span className="text-right">{selectedMember.address || "N/A"}</span>
+                  <span className="font-medium">{t('members.address')}:</span>
+                  <span className="text-right">{selectedMember.address || t('common.notAvailable')}</span>
                 </div>
                 
                 <div className="flex justify-between border-b pb-2">
-                  <span className="font-medium">Emergency Contact:</span>
-                  <span>{selectedMember.emergencyContact || "N/A"}</span>
+                  <span className="font-medium">{t('members.emergencyContact')}:</span>
+                  <span>{selectedMember.emergencyContact || t('common.notAvailable')}</span>
                 </div>
                 
                 <div className="flex justify-between border-b pb-2">
-                  <span className="font-medium">Emergency Phone:</span>
-                  <span>{selectedMember.emergencyPhone || "N/A"}</span>
+                  <span className="font-medium">{t('members.emergencyPhone')}:</span>
+                  <span>{selectedMember.emergencyPhone || t('common.notAvailable')}</span>
                 </div>
                 
                 <div className="flex justify-between border-b pb-2">
-                  <span className="font-medium">Member Since:</span>
+                  <span className="font-medium">{t('members.joinDate')}:</span>
                   <span>
                     {selectedMember.createdAt
                       ? new Date(selectedMember.createdAt).toLocaleDateString()
-                      : "N/A"}
+                      : t('common.notAvailable')}
                   </span>
                 </div>
                 
                 <div className="mt-4">
-                  <span className="font-medium">Notes:</span>
+                  <span className="font-medium">{t('members.notes')}:</span>
                   <p className="mt-2 p-3 bg-gray-50 rounded-md min-h-[80px]">
-                    {selectedMember.notes || "No notes available."}
+                    {selectedMember.notes || t('members.noNotes')}
                   </p>
                 </div>
               </div>
@@ -313,7 +315,7 @@ export default function Members() {
                   variant="outline" 
                   onClick={() => setShowViewMemberModal(false)}
                 >
-                  Close
+                  {t('common.close')}
                 </Button>
               </div>
             </div>
