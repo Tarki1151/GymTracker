@@ -22,6 +22,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { insertMembershipPlanSchema, InsertMembershipPlan } from "@shared/schema";
 import { Switch } from "@/components/ui/switch";
+import { useCurrency } from "@/hooks/use-currency";
 
 interface AddMembershipFormProps {
   isOpen: boolean;
@@ -36,6 +37,8 @@ const formSchema = insertMembershipPlanSchema.extend({
 type FormValues = z.infer<typeof formSchema>;
 
 export default function AddMembershipForm({ isOpen, onClose, onSubmit }: AddMembershipFormProps) {
+  const { currencySymbol } = useCurrency();
+  
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -121,11 +124,11 @@ export default function AddMembershipForm({ isOpen, onClose, onSubmit }: AddMemb
                     <FormLabel>Price</FormLabel>
                     <FormControl>
                       <Input 
-                        placeholder="99.99" 
+                        placeholder={`${currencySymbol} 99.99`} 
                         {...field} 
                       />
                     </FormControl>
-                    <FormDescription>Price in dollars (USD)</FormDescription>
+                    <FormDescription>Price in {currencySymbol}</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}

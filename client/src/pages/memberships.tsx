@@ -26,6 +26,7 @@ export default function Memberships() {
   const [searchTerm, setSearchTerm] = useState("");
   const [showAddMembershipModal, setShowAddMembershipModal] = useState(false);
   const { toast } = useToast();
+  const { formatCurrency } = useCurrency();
 
   const { data: plans, isLoading } = useQuery<MembershipPlan[]>({
     queryKey: ["/api/membership-plans"],
@@ -130,7 +131,7 @@ export default function Memberships() {
                       
                       <div className="flex items-center mt-4 text-gray-700">
                         <DollarSign className="h-5 w-5 mr-2 text-green-600" />
-                        <span className="text-xl font-bold">{Number(plan.price).toFixed(2)}</span>
+                        <span className="text-xl font-bold">{formatCurrency(Number(plan.price))}</span>
                       </div>
                       
                       <div className="flex items-center mt-2 text-gray-700">
@@ -200,7 +201,7 @@ export default function Memberships() {
                         </TableCell>
                         <TableCell>{plan.description}</TableCell>
                         <TableCell>{plan.duration} days</TableCell>
-                        <TableCell>${Number(plan.price).toFixed(2)}</TableCell>
+                        <TableCell>{formatCurrency(Number(plan.price))}</TableCell>
                         <TableCell>
                           <div className="flex items-center gap-2">
                             <Switch
