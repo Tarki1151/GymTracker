@@ -18,6 +18,7 @@ import { apiRequest, queryClient } from "@/lib/queryClient";
 import { MembershipPlan, InsertMembershipPlan } from "@shared/schema";
 import AddMembershipForm from "@/components/modals/add-membership-form";
 import { useToast } from "@/hooks/use-toast";
+import { useCurrency } from "@/hooks/use-currency";
 import { Search, Plus, Dumbbell, Calendar, DollarSign } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 

@@ -228,7 +228,11 @@ export default function MemberForm({ isOpen, onClose, onSubmit, editMode = false
                   <FormItem>
                     <FormLabel>{t('members.emergencyPhone')}</FormLabel>
                     <FormControl>
-                      <Input placeholder={t('members.enterEmergencyPhone')} {...field} />
+                      <Input 
+                        placeholder={t('members.enterEmergencyPhone')} 
+                        {...field} 
+                        value={field.value || ""} 
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -243,7 +247,12 @@ export default function MemberForm({ isOpen, onClose, onSubmit, editMode = false
                 <FormItem>
                   <FormLabel>{t('members.notes')}</FormLabel>
                   <FormControl>
-                    <Textarea placeholder={t('members.enterNotes')} className="h-20" {...field} />
+                    <Textarea 
+                      placeholder={t('members.enterNotes')} 
+                      className="h-20" 
+                      {...field} 
+                      value={field.value || ""} 
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

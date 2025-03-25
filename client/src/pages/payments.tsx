@@ -17,6 +17,7 @@ import { apiRequest, queryClient } from "@/lib/queryClient";
 import { Payment, Member, Subscription, MembershipPlan } from "@shared/schema";
 import AddPaymentForm from "@/components/modals/add-payment-form";
 import { useToast } from "@/hooks/use-toast";
+import { useCurrency } from "@/hooks/use-currency";
 import { 
   Search, 
   Plus, 
@@ -37,6 +38,7 @@ export default function Payments() {
   const [searchTerm, setSearchTerm] = useState("");
   const [showAddPaymentModal, setShowAddPaymentModal] = useState(false);
   const { toast } = useToast();
+  const { formatCurrency } = useCurrency();
 
   const { data: payments, isLoading: isLoadingPayments } = useQuery<Payment[]>({
     queryKey: ["/api/payments"],
@@ -80,7 +82,7 @@ export default function Payments() {
       setShowAddPaymentModal(false);
       toast({
         title: "Payment recorded successfully",
-        description: `Payment of $${paymentData.amount} has been recorded.`,
+        description: `Payment of ${formatCurrency(Number(paymentData.amount))} has been recorded.`,
       });
     } catch (error) {
       toast({
@@ -171,7 +173,7 @@ export default function Payments() {
                           {payment.plan?.name || "Unknown Plan"}
                         </TableCell>
                         <TableCell className="font-semibold">
-                          ${Number(payment.amount).toFixed(2)}
+                          {formatCurrency(Number(payment.amount))}
                         </TableCell>
                         <TableCell>
                           {new Date(payment.paymentDate).toLocaleDateString()}
