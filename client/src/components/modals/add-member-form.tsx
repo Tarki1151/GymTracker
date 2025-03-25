@@ -164,8 +164,8 @@ export default function MemberForm({ isOpen, onClose, onSubmit, editMode = false
                     <FormLabel>{t('members.gender')}</FormLabel>
                     <Select
                       onValueChange={field.onChange}
-                      defaultValue={field.value}
-                      value={field.value}
+                      defaultValue={field.value || ""}
+                      value={field.value || ""}
                     >
                       <FormControl>
                         <SelectTrigger>
@@ -190,7 +190,11 @@ export default function MemberForm({ isOpen, onClose, onSubmit, editMode = false
                   <FormItem>
                     <FormLabel>{t('members.address')}</FormLabel>
                     <FormControl>
-                      <Input placeholder={t('members.enterAddress')} {...field} />
+                      <Input 
+                        placeholder={t('members.enterAddress')} 
+                        {...field} 
+                        value={field.value || ""} 
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -206,7 +210,11 @@ export default function MemberForm({ isOpen, onClose, onSubmit, editMode = false
                   <FormItem>
                     <FormLabel>{t('members.emergencyContact')}</FormLabel>
                     <FormControl>
-                      <Input placeholder={t('members.enterEmergencyContact')} {...field} />
+                      <Input 
+                        placeholder={t('members.enterEmergencyContact')} 
+                        {...field} 
+                        value={field.value || ""} 
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

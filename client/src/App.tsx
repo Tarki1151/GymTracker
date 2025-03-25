@@ -37,8 +37,10 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <Router />
-        <Toaster />
+        <CurrencyProvider>
+          <Router />
+          <Toaster />
+        </CurrencyProvider>
       </AuthProvider>
     </QueryClientProvider>
   );
