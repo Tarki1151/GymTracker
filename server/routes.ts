@@ -449,6 +449,246 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Reports data endpoint
+  app.get("/api/reports", async (req, res) => {
+    try {
+      const members = await storage.getMembers();
+      const activeMembers = members.filter(member => member.active);
+      const membershipPlans = await storage.getMembershipPlans();
+      const subscriptions = await storage.getSubscriptions();
+      const activeSubscriptions = subscriptions.filter(
+        sub => sub.status === "active" && new Date(sub.endDate) >= new Date()
+      );
+      const payments = await storage.getPayments();
+      const attendanceRecords = await storage.getAttendanceRecords();
+      
+      // Current date information
+      const currentDate = new Date();
+      const currentYear = currentDate.getFullYear();
+      const currentMonth = currentDate.getMonth();
+      const today = new Date(currentDate);
+      today.setHours(0, 0, 0, 0);
+      
+      // Calculate member growth by month for the past year
+      const membersByMonth = [];
+      for (let i = 0; i < 12; i++) {
+        const month = (currentMonth - i + 12) % 12;
+        const year = currentMonth - i < 0 ? currentYear - 1 : currentYear;
+        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        
+        // Count members registered before the end of this month
+        const monthEnd = new Date(year, month + 1, 0);
+        const count = members.filter(member => 
+          new Date(member.createdAt) <= monthEnd
+        ).length;
+        
+        membersByMonth.unshift({
+          month: monthNames[month],
+          count
+        });
+      }
+      
+      // Calculate membership plan distribution
+      const membershipDistribution = membershipPlans.map(plan => {
+        const planSubscriptions = subscriptions.filter(sub => 
+          sub.planId === plan.id && sub.status === 'active'
+        );
+        
+        return {
+          name: plan.name,
+          value: planSubscriptions.length
+        };
+      }).filter(item => item.value > 0);
+      
+      // Calculate revenue by month for the past year
+      const revenueByMonth = [];
+      for (let i = 0; i < 12; i++) {
+        const month = (currentMonth - i + 12) % 12;
+        const year = currentMonth - i < 0 ? currentYear - 1 : currentYear;
+        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        
+        // Get first and last day of the month
+        const monthStart = new Date(year, month, 1);
+        const monthEnd = new Date(year, month + 1, 0);
+        
+        // Calculate revenue for this month
+        const monthPayments = payments.filter(payment => {
+          const paymentDate = new Date(payment.paymentDate);
+          return paymentDate >= monthStart && paymentDate <= monthEnd;
+        });
+        
+        const revenue = monthPayments.reduce(
+          (total, payment) => total + Number(payment.amount), 0
+        );
+        
+        revenueByMonth.unshift({
+          month: monthNames[month],
+          revenue
+        });
+      }
+      
+      // Calculate attendance by day of week
+      const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+      const attendanceByDay = Array(7).fill(0).map((_, index) => {
+        return { day: daysOfWeek[index], count: 0 };
+      });
+      
+      // Count attendance for each day of the week
+      attendanceRecords.forEach(record => {
+        const day = new Date(record.checkInTime).getDay(); // 0 = Sunday, 6 = Saturday
+        attendanceByDay[day].count += 1;
+      });
+      
+      // Get expiring memberships
+      // Today
+      const expiringToday = activeSubscriptions.filter(sub => {
+        const endDate = new Date(sub.endDate);
+        endDate.setHours(0, 0, 0, 0);
+        return endDate.getTime() === today.getTime();
+      }).length;
+      
+      // This week
+      const weekFromToday = new Date(today);
+      weekFromToday.setDate(today.getDate() + 7);
+      
+      const expiringThisWeek = activeSubscriptions.filter(sub => {
+        const endDate = new Date(sub.endDate);
+        endDate.setHours(0, 0, 0, 0);
+        return endDate > today && endDate <= weekFromToday;
+      }).length;
+      
+      // This month
+      const monthFromToday = new Date(today);
+      monthFromToday.setMonth(today.getMonth() + 1);
+      
+      const expiringThisMonth = activeSubscriptions.filter(sub => {
+        const endDate = new Date(sub.endDate);
+        endDate.setHours(0, 0, 0, 0);
+        return endDate > weekFromToday && endDate <= monthFromToday;
+      }).length;
+      
+      // Expired, not renewed
+      const expired = subscriptions.filter(sub => 
+        sub.status === 'expired' && new Date(sub.endDate) < today
+      ).length;
+      
+      // Calculate member statistics
+      const newMembersThisMonth = members.filter(member => {
+        const createdAt = new Date(member.createdAt);
+        const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+        return createdAt >= firstDayOfMonth;
+      }).length;
+      
+      // Gender ratio calculation - using a dummy value since we don't track gender
+      // In a real app, you would use actual gender data from member profiles
+      const genderRatio = "60% / 38% / 2%";
+      
+      // Age distribution calculation - using dummy values for the same reason
+      // In a real app, you would calculate this from member birth date/age data
+      const ageDistribution = [
+        { name: "18-25", value: 85 },
+        { name: "26-35", value: 165 },
+        { name: "36-45", value: 120 },
+        { name: "46+", value: 88 },
+      ];
+      
+      // Subscription statistics
+      const totalSubscriptions = subscriptions.length;
+      const activeSubscriptionsCount = activeSubscriptions.length;
+      
+      // Renewal rate and average subscription length would be calculated from historical data
+      // Using placeholder values for now
+      const renewalRate = "76%";
+      const avgSubscriptionLength = "7.2 months";
+      
+      // Revenue statistics for current year and previous year
+      const thisYearStart = new Date(currentYear, 0, 1);
+      const lastYearStart = new Date(currentYear - 1, 0, 1);
+      const lastYearEnd = new Date(currentYear - 1, 11, 31);
+      
+      const thisYearRevenue = payments
+        .filter(payment => new Date(payment.paymentDate) >= thisYearStart)
+        .reduce((total, payment) => total + Number(payment.amount), 0);
+      
+      const lastYearRevenue = payments
+        .filter(payment => {
+          const date = new Date(payment.paymentDate);
+          return date >= lastYearStart && date <= lastYearEnd;
+        })
+        .reduce((total, payment) => total + Number(payment.amount), 0);
+      
+      const revenueGrowth = lastYearRevenue > 0 
+        ? ((thisYearRevenue - lastYearRevenue) / lastYearRevenue * 100).toFixed(1) 
+        : "N/A";
+      
+      // Popular times calculation based on check-in times
+      const hourCounts = Array(24).fill(0);
+      
+      attendanceRecords.forEach(record => {
+        const hour = new Date(record.checkInTime).getHours();
+        hourCounts[hour]++;
+      });
+      
+      // Find the most popular hours (top 3)
+      const topHours = hourCounts
+        .map((count, index) => ({ hour: index, count }))
+        .sort((a, b) => b.count - a.count)
+        .slice(0, 3)
+        .map(item => {
+          const hour = item.hour;
+          const period = hour >= 12 ? "PM" : "AM";
+          const displayHour = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
+          return `${displayHour}${period}`;
+        })
+        .join(", ");
+      
+      res.json({
+        members: {
+          membersByMonth,
+          totalMembers: members.length,
+          activeMembers: activeMembers.length,
+          newMembersThisMonth,
+          genderRatio,
+          ageDistribution
+        },
+        memberships: {
+          membershipDistribution,
+          totalSubscriptions,
+          activeSubscriptions: activeSubscriptionsCount,
+          renewalRate,
+          avgSubscriptionLength,
+          expiringToday,
+          expiringThisWeek,
+          expiringThisMonth,
+          expired
+        },
+        revenue: {
+          revenueByMonth,
+          thisYearRevenue,
+          lastYearRevenue,
+          revenueGrowth,
+          currentMonthRevenue: revenueByMonth.length > 0 ? revenueByMonth[revenueByMonth.length - 1].revenue : 0,
+          previousMonthRevenue: revenueByMonth.length > 1 ? revenueByMonth[revenueByMonth.length - 2].revenue : 0
+        },
+        attendance: {
+          attendanceByDay,
+          topHours,
+          totalAttendance: attendanceRecords.length,
+          averageDaily: Math.round(attendanceRecords.length / Math.max(1, 
+            // Using last 30 days for average calculation
+            [...new Set(attendanceRecords
+              .filter(record => new Date(record.checkInTime) >= new Date(currentDate.getTime() - 30 * 24 * 60 * 60 * 1000))
+              .map(record => new Date(record.checkInTime).toDateString())
+            )].length
+          ))
+        }
+      });
+    } catch (error) {
+      console.error("Reports API error:", error);
+      res.status(500).json({ message: "Failed to fetch reports data" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

@@ -31,80 +31,53 @@ import {
   LineChart,
   Line,
 } from "recharts";
+import { useCurrency } from "@/hooks/use-currency";
 import { Download, BarChart2, PieChart as PieChartIcon } from "lucide-react";
+
+interface ReportsData {
+  members: {
+    membersByMonth: { month: string; count: number }[];
+    totalMembers: number;
+    activeMembers: number;
+    newMembersThisMonth: number;
+    genderRatio: string;
+    ageDistribution: { name: string; value: number }[];
+  };
+  memberships: {
+    membershipDistribution: { name: string; value: number }[];
+    totalSubscriptions: number;
+    activeSubscriptions: number;
+    renewalRate: string;
+    avgSubscriptionLength: string;
+    expiringToday: number;
+    expiringThisWeek: number;
+    expiringThisMonth: number;
+    expired: number;
+  };
+  revenue: {
+    revenueByMonth: { month: string; revenue: number }[];
+    thisYearRevenue: number;
+    lastYearRevenue: number;
+    revenueGrowth: string;
+    currentMonthRevenue: number;
+    previousMonthRevenue: number;
+  };
+  attendance: {
+    attendanceByDay: { day: string; count: number }[];
+    topHours: string;
+    totalAttendance: number;
+    averageDaily: number;
+  };
+}
 
 export default function Reports() {
   const [activeTab, setActiveTab] = useState("members");
+  const { formatCurrency } = useCurrency();
 
-  const { data: members, isLoading: isLoadingMembers } = useQuery({
-    queryKey: ["/api/members"],
+  // Fetch the reports data
+  const { data: reportsData, isLoading } = useQuery<ReportsData>({
+    queryKey: ["/api/reports"],
   });
-
-  const { data: subscriptions, isLoading: isLoadingSubscriptions } = useQuery({
-    queryKey: ["/api/subscriptions"],
-  });
-
-  const { data: payments, isLoading: isLoadingPayments } = useQuery({
-    queryKey: ["/api/payments"],
-  });
-
-  const { data: attendance, isLoading: isLoadingAttendance } = useQuery({
-    queryKey: ["/api/attendance"],
-  });
-
-  const isLoading = 
-    isLoadingMembers || 
-    isLoadingSubscriptions || 
-    isLoadingPayments || 
-    isLoadingAttendance;
-
-  // Sample data - in a real app this would be calculated from the API data
-  const membersByMonth = [
-    { month: "Jan", count: 310 },
-    { month: "Feb", count: 325 },
-    { month: "Mar", count: 342 },
-    { month: "Apr", count: 367 },
-    { month: "May", count: 388 },
-    { month: "Jun", count: 402 },
-    { month: "Jul", count: 418 },
-    { month: "Aug", count: 425 },
-    { month: "Sep", count: 435 },
-    { month: "Oct", count: 440 },
-    { month: "Nov", count: 452 },
-    { month: "Dec", count: 458 },
-  ];
-
-  const membershipDistribution = [
-    { name: "Premium Monthly", value: 187 },
-    { name: "Standard Monthly", value: 145 },
-    { name: "Standard Annual", value: 75 },
-    { name: "Elite Quarterly", value: 51 },
-  ];
-
-  const revenueByMonth = [
-    { month: "Jan", revenue: 28000 },
-    { month: "Feb", revenue: 29500 },
-    { month: "Mar", revenue: 30800 },
-    { month: "Apr", revenue: 32500 },
-    { month: "May", revenue: 34000 },
-    { month: "Jun", revenue: 35200 },
-    { month: "Jul", revenue: 36000 },
-    { month: "Aug", revenue: 36500 },
-    { month: "Sep", revenue: 37000 },
-    { month: "Oct", revenue: 37800 },
-    { month: "Nov", revenue: 38200 },
-    { month: "Dec", revenue: 39000 },
-  ];
-
-  const attendanceByDay = [
-    { day: "Mon", count: 132 },
-    { day: "Tue", count: 120 },
-    { day: "Wed", count: 158 },
-    { day: "Thu", count: 142 },
-    { day: "Fri", count: 135 },
-    { day: "Sat", count: 85 },
-    { day: "Sun", count: 68 },
-  ];
 
   const COLORS = ['#3b82f6', '#10b981', '#6366f1', '#f43f5e'];
 
@@ -160,7 +133,7 @@ export default function Reports() {
                     <div className="h-[300px]">
                       <ResponsiveContainer width="100%" height="100%">
                         <LineChart
-                          data={membersByMonth}
+                          data={reportsData?.members.membersByMonth || []}
                           margin={{
                             top: 5,
                             right: 30,
