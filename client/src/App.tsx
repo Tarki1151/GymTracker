@@ -14,6 +14,7 @@ import Equipment from "@/pages/equipment";
 import Settings from "@/pages/settings";
 import { ProtectedRoute } from "./lib/protected-route";
 import { AuthProvider } from "@/hooks/use-auth";
+import { CurrencyProvider } from "@/hooks/use-currency";
 
 function Router() {
   return (

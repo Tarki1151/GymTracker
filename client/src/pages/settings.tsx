@@ -55,6 +55,7 @@ export default function Settings() {
   const [businessHours, setBusinessHours] = useState("6:00 AM - 10:00 PM");
   const [contactEmail, setContactEmail] = useState("contact@tarabyamarte.com");
   const [maintenanceMode, setMaintenanceMode] = useState("false");
+  const [currency, setCurrency] = useState("TRY");
   
   // Ayarları getirmek için query
   const { data: settings, isLoading: isLoadingSettings } = useQuery<Setting[]>({ 
@@ -69,6 +70,7 @@ export default function Settings() {
         if (setting.key === 'businessHours') setBusinessHours(setting.value);
         if (setting.key === 'contactEmail') setContactEmail(setting.value);
         if (setting.key === 'maintenanceMode') setMaintenanceMode(setting.value);
+        if (setting.key === 'currency') setCurrency(setting.value);
       });
     }
   }, [settings]);
@@ -100,6 +102,7 @@ export default function Settings() {
       await updateSettingMutation.mutateAsync({ key: 'businessHours', value: businessHours });
       await updateSettingMutation.mutateAsync({ key: 'contactEmail', value: contactEmail });
       await updateSettingMutation.mutateAsync({ key: 'maintenanceMode', value: maintenanceMode });
+      await updateSettingMutation.mutateAsync({ key: 'currency', value: currency });
       
       toast({
         title: "Settings saved",
@@ -408,6 +411,28 @@ export default function Settings() {
                           checked={maintenanceMode === "true"} 
                           onCheckedChange={(checked) => setMaintenanceMode(checked ? "true" : "false")}
                         />
+                      </div>
+                    </div>
+                    
+                    <div className="pt-4 border-t">
+                      <div className="flex items-center justify-between">
+                        <div className="space-y-1">
+                          <div className="flex items-center">
+                            <FileText className="h-4 w-4 mr-2 text-gray-500" />
+                            <h4 className="text-sm font-medium">Currency</h4>
+                          </div>
+                          <p className="text-sm text-gray-500">Select the currency to use throughout the application</p>
+                        </div>
+                        <select
+                          id="currency"
+                          value={currency}
+                          onChange={(e) => setCurrency(e.target.value)}
+                          className="h-10 rounded-md border border-input bg-transparent px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                        >
+                          <option value="TRY">₺ Turkish Lira (TRY)</option>
+                          <option value="USD">$ US Dollar (USD)</option>
+                          <option value="EUR">€ Euro (EUR)</option>
+                        </select>
                       </div>
                     </div>
                     
