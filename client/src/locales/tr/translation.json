@@ -97,7 +97,17 @@
     "noMembersFound": "Üye bulunamadı",
     "noMembersMatchSearch": "Arama kriterlerinize uygun üye bulunamadı.",
     "getStartedByAdding": "Yeni bir üye ekleyerek başlayın.",
-    "noNotes": "Not bulunmuyor."
+    "noNotes": "Not bulunmuyor.",
+    "enterFullName": "Tam adı girin",
+    "enterEmail": "E-posta adresini girin",
+    "enterPhone": "Telefon numarasını girin",
+    "enterAddress": "Adresi girin",
+    "selectGender": "Cinsiyet seçin",
+    "enterEmergencyContact": "Acil durum kişisi adını girin",
+    "enterEmergencyPhone": "Acil durum telefon numarasını girin",
+    "enterNotes": "Ek notları girin",
+    "editSuccess": "Üye başarıyla güncellendi",
+    "editSuccessDesc": "Üye bilgileri başarıyla güncellendi."
   },
   "memberships": {
     "title": "Üyelik Planları",

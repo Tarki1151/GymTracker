@@ -15,7 +15,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { Member, InsertMember } from "@shared/schema";
-import AddMemberForm from "@/components/modals/add-member-form";
+import MemberForm from "@/components/modals/add-member-form";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { Search, Plus, UserRound, Edit, Eye } from "lucide-react";
@@ -27,6 +27,7 @@ export default function Members() {
   const { t } = useTranslation();
   const [searchTerm, setSearchTerm] = useState("");
   const [showAddMemberModal, setShowAddMemberModal] = useState(false);
+  const [showEditMemberModal, setShowEditMemberModal] = useState(false);
   const [selectedMember, setSelectedMember] = useState<Member | null>(null);
   const [showViewMemberModal, setShowViewMemberModal] = useState(false);
   const [, setLocation] = useLocation();
@@ -45,6 +46,27 @@ export default function Members() {
       toast({
         title: t('members.statusUpdated'),
         description: t('members.statusUpdatedDesc'),
+      });
+    },
+    onError: () => {
+      toast({
+        title: t('members.updateFailed'),
+        description: t('members.updateFailedDesc'),
+        variant: "destructive",
+      });
+    }
+  });
+
+  const updateMemberMutation = useMutation({
+    mutationFn: async ({ id, data }: { id: number; data: InsertMember }) => {
+      return apiRequest("PATCH", `/api/members/${id}`, data);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/members"] });
+      setShowEditMemberModal(false);
+      toast({
+        title: t('members.editSuccess'),
+        description: t('members.editSuccessDesc'),
       });
     },
     onError: () => {
@@ -76,6 +98,15 @@ export default function Members() {
         title: t('members.addFailed'),
         description: t('members.addFailedDesc'),
         variant: "destructive",
+      });
+    }
+  };
+
+  const handleEditMember = (memberData: InsertMember) => {
+    if (selectedMember) {
+      updateMemberMutation.mutate({ 
+        id: selectedMember.id, 
+        data: memberData 
       });
     }
   };
@@ -160,13 +191,13 @@ export default function Members() {
                         <TableCell>
                           <div className="flex items-center gap-2">
                             <Switch
-                              checked={member.active}
+                              checked={member.active === null ? true : member.active}
                               onCheckedChange={(checked) => 
                                 toggleActiveMutation.mutate({ id: member.id, active: checked })
                               }
                             />
-                            <Badge variant={member.active ? "success" : "secondary"}>
-                              {member.active ? t('members.active') : t('members.inactive')}
+                            <Badge variant={(member.active === null ? true : member.active) ? "success" : "secondary"}>
+                              {(member.active === null ? true : member.active) ? t('members.active') : t('members.inactive')}
                             </Badge>
                           </div>
                         </TableCell>
@@ -186,11 +217,8 @@ export default function Members() {
                               variant="outline" 
                               size="sm"
                               onClick={() => {
-                                // Navigate to edit page or open edit modal
-                                toast({
-                                  title: t('common.comingSoon'),
-                                  description: t('common.comingSoonDesc'),
-                                });
+                                setSelectedMember(member);
+                                setShowEditMemberModal(true);
                               }}
                             >
                               <Edit className="h-4 w-4 mr-1" /> {t('common.edit')}
@@ -223,10 +251,20 @@ export default function Members() {
         )}
       </div>
 
-      <AddMemberForm 
+      {/* Add Member Form */}
+      <MemberForm 
         isOpen={showAddMemberModal} 
         onClose={() => setShowAddMemberModal(false)} 
         onSubmit={handleAddMember}
+      />
+
+      {/* Edit Member Form */}
+      <MemberForm 
+        isOpen={showEditMemberModal} 
+        onClose={() => setShowEditMemberModal(false)} 
+        onSubmit={handleEditMember}
+        editMode={true}
+        member={selectedMember || undefined}
       />
 
       {/* View Member Modal */}
@@ -246,8 +284,8 @@ export default function Members() {
                 <div className="space-y-3">
                   <div className="flex justify-between border-b pb-2">
                     <span className="font-medium">{t('members.status')}:</span>
-                    <Badge variant={selectedMember.active ? "success" : "secondary"}>
-                      {selectedMember.active ? t('members.active') : t('members.inactive')}
+                    <Badge variant={(selectedMember.active === null ? true : selectedMember.active) ? "success" : "secondary"}>
+                      {(selectedMember.active === null ? true : selectedMember.active) ? t('members.active') : t('members.inactive')}
                     </Badge>
                   </div>
                   
@@ -316,6 +354,16 @@ export default function Members() {
                   onClick={() => setShowViewMemberModal(false)}
                 >
                   {t('common.close')}
+                </Button>
+                <Button 
+                  variant="default"
+                  onClick={() => {
+                    setShowViewMemberModal(false);
+                    setShowEditMemberModal(true);
+                  }}
+                >
+                  <Edit className="h-4 w-4 mr-1" /> 
+                  {t('common.edit')}
                 </Button>
               </div>
             </div>

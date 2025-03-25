@@ -19,7 +19,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { insertMemberSchema, InsertMember } from "@shared/schema";
+import { insertMemberSchema, InsertMember, Member } from "@shared/schema";
 import {
   Select,
   SelectContent,
@@ -27,11 +27,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 
-interface AddMemberFormProps {
+interface MemberFormProps {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (data: InsertMember) => void;
+  editMode?: boolean;
+  member?: Member;
 }
 
 const formSchema = insertMemberSchema.extend({
@@ -40,7 +44,9 @@ const formSchema = insertMemberSchema.extend({
 
 type FormValues = z.infer<typeof formSchema>;
 
-export default function AddMemberForm({ isOpen, onClose, onSubmit }: AddMemberFormProps) {
+export default function MemberForm({ isOpen, onClose, onSubmit, editMode = false, member }: MemberFormProps) {
+  const { t } = useTranslation();
+  
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -57,6 +63,28 @@ export default function AddMemberForm({ isOpen, onClose, onSubmit }: AddMemberFo
     },
   });
 
+  // Populate form when editing an existing member
+  useEffect(() => {
+    if (editMode && member) {
+      const dateOfBirthFormatted = member.dateOfBirth 
+        ? new Date(member.dateOfBirth).toISOString().split('T')[0] 
+        : '';
+      
+      form.reset({
+        fullName: member.fullName,
+        email: member.email,
+        phone: member.phone,
+        address: member.address || "",
+        dateOfBirth: dateOfBirthFormatted,
+        gender: member.gender || "",
+        emergencyContact: member.emergencyContact || "",
+        emergencyPhone: member.emergencyPhone || "",
+        notes: member.notes || "",
+        active: member.active === null ? true : member.active
+      });
+    }
+  }, [editMode, member, form]);
+
   const handleSubmit = (values: FormValues) => {
     onSubmit(values);
   };
@@ -65,7 +93,9 @@ export default function AddMemberForm({ isOpen, onClose, onSubmit }: AddMemberFo
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
-          <DialogTitle>Add New Member</DialogTitle>
+          <DialogTitle>
+            {editMode ? t('members.editMember') : t('members.addMember')}
+          </DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
@@ -75,9 +105,9 @@ export default function AddMemberForm({ isOpen, onClose, onSubmit }: AddMemberFo
                 name="fullName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Full Name</FormLabel>
+                    <FormLabel>{t('members.name')}</FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter full name" {...field} />
+                      <Input placeholder={t('members.enterFullName')} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -89,9 +119,9 @@ export default function AddMemberForm({ isOpen, onClose, onSubmit }: AddMemberFo
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel>{t('members.email')}</FormLabel>
                     <FormControl>
-                      <Input type="email" placeholder="Enter email" {...field} />
+                      <Input type="email" placeholder={t('members.enterEmail')} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -103,9 +133,9 @@ export default function AddMemberForm({ isOpen, onClose, onSubmit }: AddMemberFo
                 name="phone"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Phone</FormLabel>
+                    <FormLabel>{t('members.phone')}</FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter phone number" {...field} />
+                      <Input placeholder={t('members.enterPhone')} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -117,7 +147,7 @@ export default function AddMemberForm({ isOpen, onClose, onSubmit }: AddMemberFo
                 name="dateOfBirth"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Date of Birth</FormLabel>
+                    <FormLabel>{t('members.dateOfBirth')}</FormLabel>
                     <FormControl>
                       <Input type="date" {...field} />
                     </FormControl>
@@ -131,20 +161,21 @@ export default function AddMemberForm({ isOpen, onClose, onSubmit }: AddMemberFo
                 name="gender"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Gender</FormLabel>
+                    <FormLabel>{t('members.gender')}</FormLabel>
                     <Select
                       onValueChange={field.onChange}
                       defaultValue={field.value}
+                      value={field.value}
                     >
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select gender" />
+                          <SelectValue placeholder={t('members.selectGender')} />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="male">Male</SelectItem>
-                        <SelectItem value="female">Female</SelectItem>
-                        <SelectItem value="other">Other</SelectItem>
+                        <SelectItem value="male">{t('members.male')}</SelectItem>
+                        <SelectItem value="female">{t('members.female')}</SelectItem>
+                        <SelectItem value="other">{t('members.other')}</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -157,9 +188,9 @@ export default function AddMemberForm({ isOpen, onClose, onSubmit }: AddMemberFo
                 name="address"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Address</FormLabel>
+                    <FormLabel>{t('members.address')}</FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter address" {...field} />
+                      <Input placeholder={t('members.enterAddress')} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -173,9 +204,9 @@ export default function AddMemberForm({ isOpen, onClose, onSubmit }: AddMemberFo
                 name="emergencyContact"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Emergency Contact</FormLabel>
+                    <FormLabel>{t('members.emergencyContact')}</FormLabel>
                     <FormControl>
-                      <Input placeholder="Emergency contact name" {...field} />
+                      <Input placeholder={t('members.enterEmergencyContact')} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -187,9 +218,9 @@ export default function AddMemberForm({ isOpen, onClose, onSubmit }: AddMemberFo
                 name="emergencyPhone"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Emergency Phone</FormLabel>
+                    <FormLabel>{t('members.emergencyPhone')}</FormLabel>
                     <FormControl>
-                      <Input placeholder="Emergency contact phone" {...field} />
+                      <Input placeholder={t('members.enterEmergencyPhone')} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -202,9 +233,9 @@ export default function AddMemberForm({ isOpen, onClose, onSubmit }: AddMemberFo
               name="notes"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Notes</FormLabel>
+                  <FormLabel>{t('members.notes')}</FormLabel>
                   <FormControl>
-                    <Textarea placeholder="Additional notes" className="h-20" {...field} />
+                    <Textarea placeholder={t('members.enterNotes')} className="h-20" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -213,9 +244,11 @@ export default function AddMemberForm({ isOpen, onClose, onSubmit }: AddMemberFo
 
             <DialogFooter>
               <Button type="button" variant="outline" onClick={onClose}>
-                Cancel
+                {t('common.cancel')}
               </Button>
-              <Button type="submit">Add Member</Button>
+              <Button type="submit">
+                {editMode ? t('common.save') : t('members.addMember')}
+              </Button>
             </DialogFooter>
           </form>
         </Form>
