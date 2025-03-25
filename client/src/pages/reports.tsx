@@ -169,21 +169,21 @@ export default function Reports() {
                       <div className="space-y-4">
                         <div className="flex justify-between items-center pb-2 border-b">
                           <span className="text-sm text-gray-500">Total Members</span>
-                          <span className="font-medium">{members?.length || 0}</span>
+                          <span className="font-medium">{reportsData?.members.totalMembers || 0}</span>
                         </div>
                         <div className="flex justify-between items-center pb-2 border-b">
                           <span className="text-sm text-gray-500">Active Members</span>
                           <span className="font-medium">
-                            {members?.filter(m => m.active).length || 0}
+                            {reportsData?.members.activeMembers || 0}
                           </span>
                         </div>
                         <div className="flex justify-between items-center pb-2 border-b">
                           <span className="text-sm text-gray-500">New Members (This Month)</span>
-                          <span className="font-medium">42</span>
+                          <span className="font-medium">{reportsData?.members.newMembersThisMonth || 0}</span>
                         </div>
                         <div className="flex justify-between items-center">
                           <span className="text-sm text-gray-500">Gender Ratio (M/F/O)</span>
-                          <span className="font-medium">60% / 38% / 2%</span>
+                          <span className="font-medium">{reportsData?.members.genderRatio || "N/A"}</span>
                         </div>
                       </div>
                     </CardContent>
@@ -201,12 +201,7 @@ export default function Reports() {
                         <ResponsiveContainer width="100%" height="100%">
                           <PieChart>
                             <Pie
-                              data={[
-                                { name: "18-25", value: 85 },
-                                { name: "26-35", value: 165 },
-                                { name: "36-45", value: 120 },
-                                { name: "46+", value: 88 },
-                              ]}
+                              data={reportsData?.members.ageDistribution || []}
                               cx="50%"
                               cy="50%"
                               outerRadius={80}
@@ -215,7 +210,7 @@ export default function Reports() {
                               nameKey="name"
                               label
                             >
-                              {membershipDistribution.map((entry, index) => (
+                              {(reportsData?.members.ageDistribution || []).map((entry, index) => (
                                 <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                               ))}
                             </Pie>
@@ -242,7 +237,7 @@ export default function Reports() {
                       <ResponsiveContainer width="100%" height="100%">
                         <PieChart>
                           <Pie
-                            data={membershipDistribution}
+                            data={reportsData?.memberships.membershipDistribution || []}
                             cx="50%"
                             cy="50%"
                             labelLine={false}
@@ -252,7 +247,7 @@ export default function Reports() {
                             nameKey="name"
                             label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
                           >
-                            {membershipDistribution.map((entry, index) => (
+                            {(reportsData?.memberships.membershipDistribution || []).map((entry, index) => (
                               <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                             ))}
                           </Pie>
@@ -273,21 +268,21 @@ export default function Reports() {
                       <div className="space-y-4">
                         <div className="flex justify-between items-center pb-2 border-b">
                           <span className="text-sm text-gray-500">Total Subscriptions</span>
-                          <span className="font-medium">{subscriptions?.length || 0}</span>
+                          <span className="font-medium">{reportsData?.memberships.totalSubscriptions || 0}</span>
                         </div>
                         <div className="flex justify-between items-center pb-2 border-b">
                           <span className="text-sm text-gray-500">Active Subscriptions</span>
                           <span className="font-medium">
-                            {subscriptions?.filter(s => s.status === 'active').length || 0}
+                            {reportsData?.memberships.activeSubscriptions || 0}
                           </span>
                         </div>
                         <div className="flex justify-between items-center pb-2 border-b">
                           <span className="text-sm text-gray-500">Renewal Rate</span>
-                          <span className="font-medium">76%</span>
+                          <span className="font-medium">{reportsData?.memberships.renewalRate || "N/A"}</span>
                         </div>
                         <div className="flex justify-between items-center">
                           <span className="text-sm text-gray-500">Avg. Subscription Length</span>
-                          <span className="font-medium">7.2 months</span>
+                          <span className="font-medium">{reportsData?.memberships.avgSubscriptionLength || "N/A"}</span>
                         </div>
                       </div>
                     </CardContent>
@@ -301,19 +296,19 @@ export default function Reports() {
                       <div className="space-y-4">
                         <div className="flex justify-between items-center pb-2 border-b">
                           <span className="text-sm text-gray-500">Expiring Today</span>
-                          <span className="font-medium text-red-600">3</span>
+                          <span className="font-medium text-red-600">{reportsData?.memberships.expiringToday || 0}</span>
                         </div>
                         <div className="flex justify-between items-center pb-2 border-b">
                           <span className="text-sm text-gray-500">Expiring This Week</span>
-                          <span className="font-medium text-yellow-600">12</span>
+                          <span className="font-medium text-yellow-600">{reportsData?.memberships.expiringThisWeek || 0}</span>
                         </div>
                         <div className="flex justify-between items-center pb-2 border-b">
                           <span className="text-sm text-gray-500">Expiring This Month</span>
-                          <span className="font-medium">43</span>
+                          <span className="font-medium">{reportsData?.memberships.expiringThisMonth || 0}</span>
                         </div>
                         <div className="flex justify-between items-center">
                           <span className="text-sm text-gray-500">Expired (Not Renewed)</span>
-                          <span className="font-medium text-gray-800">8</span>
+                          <span className="font-medium text-gray-800">{reportsData?.memberships.expired || 0}</span>
                         </div>
                       </div>
                     </CardContent>
@@ -334,7 +329,7 @@ export default function Reports() {
                     <div className="h-[300px]">
                       <ResponsiveContainer width="100%" height="100%">
                         <BarChart
-                          data={revenueByMonth}
+                          data={reportsData?.revenue.revenueByMonth || []}
                           margin={{
                             top: 5,
                             right: 30,
@@ -345,10 +340,10 @@ export default function Reports() {
                           <CartesianGrid strokeDasharray="3 3" />
                           <XAxis dataKey="month" />
                           <YAxis 
-                            tickFormatter={(value) => `$${value / 1000}k`}
+                            tickFormatter={(value) => formatCurrency(value / 1000) + 'k'}
                           />
                           <Tooltip 
-                            formatter={(value) => [`$${value.toLocaleString()}`, "Revenue"]}
+                            formatter={(value) => [formatCurrency(value as number), "Revenue"]}
                           />
                           <Legend />
                           <Bar dataKey="revenue" name="Revenue" fill="#3b82f6" />
@@ -367,19 +362,21 @@ export default function Reports() {
                       <div className="space-y-4">
                         <div className="flex justify-between items-center pb-2 border-b">
                           <span className="text-sm text-gray-500">Total Revenue (YTD)</span>
-                          <span className="font-medium">$375,300</span>
+                          <span className="font-medium">{formatCurrency(reportsData?.revenue.thisYearRevenue || 0)}</span>
                         </div>
                         <div className="flex justify-between items-center pb-2 border-b">
                           <span className="text-sm text-gray-500">This Month</span>
-                          <span className="font-medium">$39,000</span>
+                          <span className="font-medium">{formatCurrency(reportsData?.revenue.currentMonthRevenue || 0)}</span>
                         </div>
                         <div className="flex justify-between items-center pb-2 border-b">
                           <span className="text-sm text-gray-500">Previous Month</span>
-                          <span className="font-medium">$38,200</span>
+                          <span className="font-medium">{formatCurrency(reportsData?.revenue.previousMonthRevenue || 0)}</span>
                         </div>
                         <div className="flex justify-between items-center">
-                          <span className="text-sm text-gray-500">Growth Rate (MoM)</span>
-                          <span className="font-medium text-green-600">+2.1%</span>
+                          <span className="text-sm text-gray-500">Growth Rate (YoY)</span>
+                          <span className={`font-medium ${parseFloat(reportsData?.revenue.revenueGrowth || "0") > 0 ? "text-green-600" : "text-red-600"}`}>
+                            {reportsData?.revenue.revenueGrowth !== "N/A" ? `${reportsData?.revenue.revenueGrowth}%` : "N/A"}
+                          </span>
                         </div>
                       </div>
                     </CardContent>
@@ -387,26 +384,18 @@ export default function Reports() {
 
                   <Card>
                     <CardHeader>
-                      <CardTitle>Revenue by Plan</CardTitle>
+                      <CardTitle>Revenue by Source</CardTitle>
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-4">
-                        <div className="flex justify-between items-center pb-2 border-b">
-                          <span className="text-sm text-gray-500">Premium Monthly</span>
-                          <span className="font-medium">$16,829</span>
-                        </div>
-                        <div className="flex justify-between items-center pb-2 border-b">
-                          <span className="text-sm text-gray-500">Standard Monthly</span>
-                          <span className="font-medium">$7,249</span>
-                        </div>
-                        <div className="flex justify-between items-center pb-2 border-b">
-                          <span className="text-sm text-gray-500">Standard Annual</span>
-                          <span className="font-medium">$6,250</span>
-                        </div>
-                        <div className="flex justify-between items-center">
-                          <span className="text-sm text-gray-500">Elite Quarterly</span>
-                          <span className="font-medium">$12,750</span>
-                        </div>
+                        {(reportsData?.memberships.membershipDistribution || []).slice(0, 4).map((plan, index) => (
+                          <div key={index} className="flex justify-between items-center pb-2 border-b">
+                            <span className="text-sm text-gray-500">{plan.name}</span>
+                            <span className="font-medium">
+                              {formatCurrency((reportsData?.revenue.currentMonthRevenue || 0) * (plan.value / (reportsData?.memberships.activeSubscriptions || 1)))}
+                            </span>
+                          </div>
+                        ))}
                       </div>
                     </CardContent>
                   </Card>
@@ -426,7 +415,7 @@ export default function Reports() {
                     <div className="h-[300px]">
                       <ResponsiveContainer width="100%" height="100%">
                         <BarChart
-                          data={attendanceByDay}
+                          data={reportsData?.attendance.attendanceByDay || []}
                           margin={{
                             top: 5,
                             right: 30,
@@ -454,20 +443,22 @@ export default function Reports() {
                     <CardContent>
                       <div className="space-y-4">
                         <div className="flex justify-between items-center pb-2 border-b">
-                          <span className="text-sm text-gray-500">Total Check-ins (This Month)</span>
-                          <span className="font-medium">3,421</span>
+                          <span className="text-sm text-gray-500">Total Check-ins</span>
+                          <span className="font-medium">{reportsData?.attendance.totalAttendance || 0}</span>
                         </div>
                         <div className="flex justify-between items-center pb-2 border-b">
-                          <span className="text-sm text-gray-500">Avg. Daily Check-ins</span>
-                          <span className="font-medium">127</span>
+                          <span className="text-sm text-gray-500">Average Daily Attendance</span>
+                          <span className="font-medium">{reportsData?.attendance.averageDaily || 0}</span>
                         </div>
                         <div className="flex justify-between items-center pb-2 border-b">
-                          <span className="text-sm text-gray-500">Peak Hour</span>
-                          <span className="font-medium">6:00 PM - 7:00 PM</span>
+                          <span className="text-sm text-gray-500">Most Popular Day</span>
+                          <span className="font-medium">
+                            {reportsData?.attendance.attendanceByDay?.sort((a, b) => b.count - a.count)[0]?.day || "N/A"}
+                          </span>
                         </div>
                         <div className="flex justify-between items-center">
-                          <span className="text-sm text-gray-500">Busiest Day</span>
-                          <span className="font-medium">Wednesday</span>
+                          <span className="text-sm text-gray-500">Peak Hours</span>
+                          <span className="font-medium">{reportsData?.attendance.topHours || "N/A"}</span>
                         </div>
                       </div>
                     </CardContent>
@@ -475,25 +466,38 @@ export default function Reports() {
 
                   <Card>
                     <CardHeader>
-                      <CardTitle>Member Engagement</CardTitle>
+                      <CardTitle>Attendance Trends</CardTitle>
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-4">
                         <div className="flex justify-between items-center pb-2 border-b">
-                          <span className="text-sm text-gray-500">Visit Frequency per Member</span>
-                          <span className="font-medium">3.2 per week</span>
+                          <span className="text-sm text-gray-500">Weekday vs Weekend</span>
+                          <span className="font-medium">
+                            {(() => {
+                              if (!reportsData?.attendance.attendanceByDay) return "N/A";
+                              const weekday = reportsData.attendance.attendanceByDay.slice(1, 6).reduce((sum, day) => sum + day.count, 0);
+                              const weekend = reportsData.attendance.attendanceByDay[0].count + reportsData.attendance.attendanceByDay[6].count;
+                              const total = weekday + weekend;
+                              if (total === 0) return "N/A";
+                              return `${Math.round(weekday / total * 100)}% / ${Math.round(weekend / total * 100)}%`;
+                            })()}
+                          </span>
                         </div>
                         <div className="flex justify-between items-center pb-2 border-b">
-                          <span className="text-sm text-gray-500">Avg. Visit Duration</span>
-                          <span className="font-medium">75 minutes</span>
+                          <span className="text-sm text-gray-500">Utilization Rate</span>
+                          <span className="font-medium">
+                            {Math.round((reportsData?.attendance.averageDaily || 0) / (reportsData?.members.activeMembers || 1) * 100)}%
+                          </span>
                         </div>
                         <div className="flex justify-between items-center pb-2 border-b">
-                          <span className="text-sm text-gray-500">Non-active Members (0 visits)</span>
-                          <span className="font-medium text-red-600">27 (7%)</span>
+                          <span className="text-sm text-gray-500">Busiest Time of Day</span>
+                          <span className="font-medium">{reportsData?.attendance.topHours?.split(',')[0] || "N/A"}</span>
                         </div>
                         <div className="flex justify-between items-center">
-                          <span className="text-sm text-gray-500">Most Active Member</span>
-                          <span className="font-medium">Michael Brown (22 visits)</span>
+                          <span className="text-sm text-gray-500">Monthly Check-ins per Member</span>
+                          <span className="font-medium">
+                            {((reportsData?.attendance.totalAttendance || 0) / (reportsData?.members.activeMembers || 1) / 3).toFixed(1)}
+                          </span>
                         </div>
                       </div>
                     </CardContent>

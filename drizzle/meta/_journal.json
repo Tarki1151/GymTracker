@@ -1,0 +1,16 @@
+{
+  "version": "5",
+  "dialect": "pg",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "hash": "initial",
+      "id": "0000_initial",
+      "name": "initial",
+      "sql": [
+        "CREATE TABLE IF NOT EXISTS \"settings\" (\n  \"id\" serial PRIMARY KEY,\n  \"key\" text NOT NULL UNIQUE,\n  \"value\" text NOT NULL,\n  \"updated_at\" timestamp DEFAULT now()\n);\n\nCREATE TABLE IF NOT EXISTS \"users\" (\n  \"id\" serial PRIMARY KEY,\n  \"username\" text NOT NULL UNIQUE,\n  \"password\" text NOT NULL,\n  \"full_name\" text NOT NULL,\n  \"email\" text NOT NULL,\n  \"role\" text NOT NULL DEFAULT 'staff',\n  \"created_at\" timestamp DEFAULT now()\n);\n\nCREATE TABLE IF NOT EXISTS \"members\" (\n  \"id\" serial PRIMARY KEY,\n  \"full_name\" text NOT NULL,\n  \"email\" text NOT NULL,\n  \"phone\" text NOT NULL,\n  \"address\" text,\n  \"date_of_birth\" date,\n  \"gender\" text,\n  \"emergency_contact\" text,\n  \"emergency_phone\" text,\n  \"notes\" text,\n  \"active\" boolean DEFAULT true,\n  \"created_at\" timestamp DEFAULT now()\n);\n\nCREATE TABLE IF NOT EXISTS \"membership_plans\" (\n  \"id\" serial PRIMARY KEY,\n  \"name\" text NOT NULL,\n  \"description\" text,\n  \"duration\" integer NOT NULL,\n  \"price\" text NOT NULL,\n  \"active\" boolean DEFAULT true,\n  \"created_at\" timestamp DEFAULT now()\n);\n\nCREATE TABLE IF NOT EXISTS \"subscriptions\" (\n  \"id\" serial PRIMARY KEY,\n  \"member_id\" integer NOT NULL,\n  \"plan_id\" integer NOT NULL,\n  \"start_date\" text NOT NULL,\n  \"end_date\" text NOT NULL,\n  \"status\" text NOT NULL DEFAULT 'active',\n  \"created_at\" timestamp DEFAULT now()\n);\n\nCREATE TABLE IF NOT EXISTS \"payments\" (\n  \"id\" serial PRIMARY KEY,\n  \"member_id\" integer NOT NULL,\n  \"subscription_id\" integer NOT NULL,\n  \"amount\" text NOT NULL,\n  \"payment_date\" text NOT NULL,\n  \"payment_method\" text NOT NULL,\n  \"notes\" text,\n  \"created_at\" timestamp DEFAULT now()\n);\n\nCREATE TABLE IF NOT EXISTS \"attendance\" (\n  \"id\" serial PRIMARY KEY,\n  \"member_id\" integer NOT NULL,\n  \"check_in_time\" timestamp NOT NULL,\n  \"check_out_time\" timestamp,\n  \"created_at\" timestamp DEFAULT now()\n);\n\nCREATE TABLE IF NOT EXISTS \"equipment\" (\n  \"id\" serial PRIMARY KEY,\n  \"name\" text NOT NULL,\n  \"category\" text NOT NULL,\n  \"status\" text NOT NULL DEFAULT 'operational',\n  \"notes\" text,\n  \"purchase_date\" text,\n  \"purchase_price\" text,\n  \"maintenance_date\" text,\n  \"created_at\" timestamp DEFAULT now()\n);\n\nCREATE TABLE IF NOT EXISTS \"activity_logs\" (\n  \"id\" serial PRIMARY KEY,\n  \"action\" text NOT NULL,\n  \"description\" text NOT NULL,\n  \"entity_id\" text,\n  \"entity_type\" text,\n  \"timestamp\" timestamp DEFAULT now()\n);"
+      ]
+    }
+  ]
+}

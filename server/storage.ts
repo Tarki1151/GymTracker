@@ -173,7 +173,12 @@ export class MemStorage implements IStorage {
 
   async createUser(user: InsertUser): Promise<User> {
     const id = this.userIdCounter++;
-    const newUser: User = { ...user, id, createdAt: new Date() };
+    const newUser: User = { 
+      ...user, 
+      id, 
+      role: user.role ?? 'staff',
+      createdAt: new Date() 
+    };
     this.usersData.set(id, newUser);
     return newUser;
   }
@@ -189,7 +194,18 @@ export class MemStorage implements IStorage {
   
   async createMember(member: InsertMember): Promise<Member> {
     const id = this.memberIdCounter++;
-    const newMember: Member = { ...member, id, createdAt: new Date() };
+    const newMember: Member = { 
+      ...member, 
+      id, 
+      active: member.active ?? true,
+      address: member.address ?? null,
+      dateOfBirth: member.dateOfBirth ?? null,
+      gender: member.gender ?? null,
+      emergencyContact: member.emergencyContact ?? null,
+      emergencyPhone: member.emergencyPhone ?? null,
+      notes: member.notes ?? null,
+      createdAt: new Date() 
+    };
     this.membersData.set(id, newMember);
     
     // Log activity
@@ -232,7 +248,13 @@ export class MemStorage implements IStorage {
   
   async createMembershipPlan(plan: InsertMembershipPlan): Promise<MembershipPlan> {
     const id = this.planIdCounter++;
-    const newPlan: MembershipPlan = { ...plan, id, createdAt: new Date() };
+    const newPlan: MembershipPlan = { 
+      ...plan, 
+      id, 
+      active: plan.active ?? true,
+      description: plan.description ?? null,
+      createdAt: new Date() 
+    };
     this.membershipPlansData.set(id, newPlan);
     
     // Log activity
@@ -280,7 +302,12 @@ export class MemStorage implements IStorage {
   
   async createSubscription(subscription: InsertSubscription): Promise<Subscription> {
     const id = this.subscriptionIdCounter++;
-    const newSubscription: Subscription = { ...subscription, id, createdAt: new Date() };
+    const newSubscription: Subscription = { 
+      ...subscription, 
+      id, 
+      status: subscription.status ?? 'active',
+      createdAt: new Date() 
+    };
     this.subscriptionsData.set(id, newSubscription);
     
     // Log activity
@@ -330,7 +357,12 @@ export class MemStorage implements IStorage {
   
   async createPayment(payment: InsertPayment): Promise<Payment> {
     const id = this.paymentIdCounter++;
-    const newPayment: Payment = { ...payment, id, createdAt: new Date() };
+    const newPayment: Payment = { 
+      ...payment, 
+      id, 
+      notes: payment.notes ?? null,
+      createdAt: new Date() 
+    };
     this.paymentsData.set(id, newPayment);
     
     // Log activity
@@ -381,13 +413,13 @@ export class MemStorage implements IStorage {
     return newAttendance;
   }
   
-  async updateAttendance(id: number, attendanceUpdate: Partial<Attendance> | { checkOutTime: string }): Promise<Attendance | undefined> {
+  async updateAttendance(id: number, attendanceUpdate: Partial<Attendance>): Promise<Attendance | undefined> {
     const existingAttendance = this.attendanceData.get(id);
     if (!existingAttendance) return undefined;
     
     // Handle the string to Date conversion for checkOutTime
     let finalUpdate: Partial<Attendance> = { ...attendanceUpdate };
-    if ('checkOutTime' in attendanceUpdate && typeof attendanceUpdate.checkOutTime === 'string') {
+    if (attendanceUpdate.checkOutTime && typeof attendanceUpdate.checkOutTime === 'string') {
       finalUpdate = {
         ...attendanceUpdate,
         checkOutTime: new Date(attendanceUpdate.checkOutTime)
@@ -422,14 +454,23 @@ export class MemStorage implements IStorage {
   
   async createEquipment(equipment: InsertEquipment): Promise<Equipment> {
     const id = this.equipmentIdCounter++;
-    const newEquipment: Equipment = { ...equipment, id, createdAt: new Date() };
+    const newEquipment: Equipment = { 
+      ...equipment, 
+      id, 
+      status: equipment.status ?? 'operational',
+      notes: equipment.notes ?? null,
+      purchaseDate: equipment.purchaseDate ?? null,
+      purchasePrice: equipment.purchasePrice ?? null,
+      maintenanceDate: equipment.maintenanceDate ?? null,
+      createdAt: new Date() 
+    };
     this.equipmentData.set(id, newEquipment);
     
     // Log activity
     this.createActivityLog({
       action: "equipment_added",
       description: `New equipment added: ${equipment.name}`,
-      entityId: id,
+      entityId: id.toString(),
       entityType: "equipment"
     });
     
@@ -447,7 +488,7 @@ export class MemStorage implements IStorage {
     this.createActivityLog({
       action: "equipment_updated",
       description: `Equipment updated: ${updatedEquipment.name}`,
-      entityId: id,
+      entityId: id.toString(),
       entityType: "equipment"
     });
     
@@ -490,12 +531,22 @@ export class MemStorage implements IStorage {
   // Activity Log methods
   async getActivityLogs(): Promise<ActivityLog[]> {
     return Array.from(this.activityLogsData.values())
-      .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
+      .sort((a, b) => {
+        const aTime = a.timestamp?.getTime() ?? 0;
+        const bTime = b.timestamp?.getTime() ?? 0;
+        return bTime - aTime;
+      });
   }
   
   async createActivityLog(log: InsertActivityLog): Promise<ActivityLog> {
     const id = this.activityLogIdCounter++;
-    const newLog: ActivityLog = { ...log, id, timestamp: new Date() };
+    const newLog: ActivityLog = { 
+      ...log, 
+      id, 
+      entityId: log.entityId ?? null,
+      entityType: log.entityType ?? null,
+      timestamp: new Date() 
+    };
     this.activityLogsData.set(id, newLog);
     return newLog;
   }
@@ -514,11 +565,27 @@ export class DatabaseStorage implements IStorage {
     });
     
     // Initialize database with sample data
-    this.initializeData();
+    this.initializeData().catch(err => {
+      console.error('Failed to initialize database:', err);
+    });
+  }
+  
+  // Test connection to database
+  async testConnection(): Promise<void> {
+    try {
+      const result = await db.select().from(settings).limit(1);
+      console.log("Connection test successful, settings table found:", result);
+    } catch (error) {
+      console.error("Connection test failed:", error);
+      throw error;
+    }
   }
   
   // Veritabanını örnek verilerle başlatma
   private async initializeData() {
+    // Wait for a moment to ensure tables are created
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
     try {
       // 1. Check if default data already exists
       const existingPlans = await this.getMembershipPlans();
@@ -703,6 +770,7 @@ export class DatabaseStorage implements IStorage {
       }
     } catch (error) {
       console.error("Database initialization error:", error);
+      throw error; // Hata durumunda başlatma işlemini durdur
     }
   }
 
@@ -720,6 +788,7 @@ export class DatabaseStorage implements IStorage {
   async createUser(user: InsertUser): Promise<User> {
     const [newUser] = await db.insert(users).values({
       ...user,
+      role: user.role ?? 'staff',
       createdAt: new Date()
     }).returning();
     return newUser;
@@ -738,6 +807,13 @@ export class DatabaseStorage implements IStorage {
   async createMember(member: InsertMember): Promise<Member> {
     const [newMember] = await db.insert(members).values({
       ...member,
+      active: member.active ?? true,
+      address: member.address ?? null,
+      dateOfBirth: member.dateOfBirth ?? null,
+      gender: member.gender ?? null,
+      emergencyContact: member.emergencyContact ?? null,
+      emergencyPhone: member.emergencyPhone ?? null,
+      notes: member.notes ?? null,
       createdAt: new Date()
     }).returning();
     
@@ -784,6 +860,8 @@ export class DatabaseStorage implements IStorage {
   async createMembershipPlan(plan: InsertMembershipPlan): Promise<MembershipPlan> {
     const [newPlan] = await db.insert(membershipPlans).values({
       ...plan,
+      active: plan.active ?? true,
+      description: plan.description ?? null,
       createdAt: new Date()
     }).returning();
     
@@ -834,6 +912,7 @@ export class DatabaseStorage implements IStorage {
   async createSubscription(subscription: InsertSubscription): Promise<Subscription> {
     const [newSubscription] = await db.insert(subscriptions).values({
       ...subscription,
+      status: subscription.status ?? 'active',
       createdAt: new Date()
     }).returning();
     
@@ -886,6 +965,7 @@ export class DatabaseStorage implements IStorage {
   async createPayment(payment: InsertPayment): Promise<Payment> {
     const [newPayment] = await db.insert(payments).values({
       ...payment,
+      notes: payment.notes ?? null,
       createdAt: new Date()
     }).returning();
     
@@ -935,6 +1015,10 @@ export class DatabaseStorage implements IStorage {
   }
   
   async updateAttendance(id: number, attendanceUpdate: Partial<Attendance>): Promise<Attendance | undefined> {
+    // Convert string dates to Date objects
+    if (typeof attendanceUpdate.checkOutTime === 'string') {
+      attendanceUpdate.checkOutTime = new Date(attendanceUpdate.checkOutTime);
+    }
     const [updatedAttendance] = await db.update(attendance)
       .set(attendanceUpdate)
       .where(eq(attendance.id, id))
@@ -967,6 +1051,11 @@ export class DatabaseStorage implements IStorage {
   async createEquipment(equipmentItem: InsertEquipment): Promise<Equipment> {
     const [newEquipment] = await db.insert(equipment).values({
       ...equipmentItem,
+      status: equipmentItem.status ?? 'operational',
+      notes: equipmentItem.notes ?? null,
+      purchaseDate: equipmentItem.purchaseDate ?? null,
+      purchasePrice: equipmentItem.purchasePrice ?? null,
+      maintenanceDate: equipmentItem.maintenanceDate ?? null,
       createdAt: new Date()
     }).returning();
     
@@ -1041,6 +1130,8 @@ export class DatabaseStorage implements IStorage {
   async createActivityLog(log: InsertActivityLog): Promise<ActivityLog> {
     const [newLog] = await db.insert(activityLogs).values({
       ...log,
+      entityId: log.entityId ?? null,
+      entityType: log.entityType ?? null,
       timestamp: new Date()
     }).returning();
     return newLog;
@@ -1050,11 +1141,19 @@ export class DatabaseStorage implements IStorage {
 // Veritabanı depolama sınıfını kullan
 export const storage = new DatabaseStorage();
 
-// Varsayılan ayarları oluştur
+// Varsayılan ayarları oluştur ve bağlantıyı test et
 (async () => {
-  // Uygulama adı ayarını ekle (eğer yoksa)
-  const appNameSetting = await storage.getSetting('appName');
-  if (!appNameSetting) {
-    await storage.createSetting({ key: 'appName', value: 'TarabyaMarte' });
+  try {
+    // Test bağlantısını çalıştır
+    await storage.testConnection();
+    
+    // Varsayılan ayarları oluştur
+    const appNameSetting = await storage.getSetting('appName');
+    if (!appNameSetting) {
+      await storage.createSetting({ key: 'appName', value: 'TarabyaMarte' });
+    }
+  } catch (error) {
+    console.error("Failed to initialize storage:", error);
+    throw error;
   }
 })();
